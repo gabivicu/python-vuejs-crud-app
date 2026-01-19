@@ -3,7 +3,7 @@
     <div class="page-header">
       <h1>About This Application</h1>
     </div>
-    
+
     <div class="about-content">
       <section class="about-section">
         <h2>📝 Todo Items Manager</h2>
@@ -174,4 +174,3 @@ export default {
   color: var(--text-secondary);
 }
 </style>
-

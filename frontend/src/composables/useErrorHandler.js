@@ -12,8 +12,8 @@ export function useErrorHandler() {
     isError.value = true
     if (err.response) {
       // Server responded with error
-      error.value = err.response.data?.detail || 
-                    err.response.data?.message || 
+      error.value = err.response.data?.detail ||
+                    err.response.data?.message ||
                     `Server error: ${err.response.status}`
     } else if (err.request) {
       // Request made but no response

@@ -21,7 +21,7 @@
       </div>
 
       <!-- Router View -->
-      <router-view 
+      <router-view
         :showDashboard="showDashboard"
         :createModalTrigger="createModalTrigger"
         @update:createModalTrigger="createModalTrigger = $event"

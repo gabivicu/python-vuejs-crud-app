@@ -31,15 +31,15 @@ export const useItemsStore = defineStore('items', () => {
   })
 
   // Getters (computed)
-  const completedItems = computed(() => 
+  const completedItems = computed(() =>
     items.value.filter(item => item.completed)
   )
 
-  const pendingItems = computed(() => 
+  const pendingItems = computed(() =>
     items.value.filter(item => !item.completed)
   )
 
-  const overdueItems = computed(() => 
+  const overdueItems = computed(() =>
     items.value.filter(item => {
       if (!item.due_date || item.completed) return false
       return new Date(item.due_date) < new Date()

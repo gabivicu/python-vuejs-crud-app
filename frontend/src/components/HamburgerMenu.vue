@@ -1,7 +1,7 @@
 <template>
   <div class="hamburger-menu">
-    <button 
-      @click="toggleMenu" 
+    <button
+      @click="toggleMenu"
       class="hamburger-btn"
       :class="{ active: isOpen }"
       aria-label="Toggle menu"
@@ -10,15 +10,15 @@
       <span></span>
       <span></span>
     </button>
-    
+
     <div :class="['sidebar', { open: isOpen }]" @click.stop>
       <div class="sidebar-header">
         <h2>📝 Menu</h2>
         <button @click="toggleMenu" class="close-sidebar-btn">&times;</button>
       </div>
       <nav class="sidebar-nav">
-        <router-link 
-          v-for="item in menuItems" 
+        <router-link
+          v-for="item in menuItems"
           :key="item.path"
           :to="item.path"
           @click="closeMenu"
@@ -30,10 +30,10 @@
         </router-link>
       </nav>
     </div>
-    
-    <div 
-      v-if="isOpen" 
-      class="sidebar-overlay" 
+
+    <div
+      v-if="isOpen"
+      class="sidebar-overlay"
       @click="closeMenu"
     ></div>
   </div>
@@ -231,4 +231,3 @@ export default {
   }
 }
 </style>
-

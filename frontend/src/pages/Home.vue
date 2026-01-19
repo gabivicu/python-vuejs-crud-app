@@ -35,7 +35,7 @@
             <div v-for="(count, priority) in stats.priority_stats" :key="priority" class="chart-bar">
               <div class="bar-label">{{ priority }}</div>
               <div class="bar-container">
-                <div 
+                <div
                   :class="['bar', `priority-${priority}`]"
                   :style="{ width: `${(count / (stats.total || 1)) * 100}%` }"
                 ></div>
@@ -50,7 +50,7 @@
             <div v-for="(count, category) in stats.category_stats" :key="category" class="chart-bar">
               <div class="bar-label">{{ category }}</div>
               <div class="bar-container">
-                <div 
+                <div
                   class="bar category-bar"
                   :style="{ width: `${(count / (stats.total || 1)) * 100}%` }"
                 ></div>
@@ -144,14 +144,14 @@
 
     <!-- Items List -->
     <div v-else class="items-list">
-      <div 
-        v-for="item in items" 
-        :key="item.id" 
+      <div
+        v-for="item in items"
+        :key="item.id"
         :class="['item-card', { 'selected': selectedItems.includes(item.id), 'overdue': isOverdue(item) }]"
       >
         <div class="item-checkbox">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             :checked="selectedItems.includes(item.id)"
             @change="toggleSelection(item.id)"
           />
@@ -256,10 +256,10 @@
                 <span v-else class="placeholder-date">Select a date...</span>
                 <span class="calendar-icon">📅</span>
               </div>
-              <button 
-                v-if="formData.due_date" 
-                type="button" 
-                @click.stop="clearDueDate" 
+              <button
+                v-if="formData.due_date"
+                type="button"
+                @click.stop="clearDueDate"
                 class="btn-clear-date-small"
               >
                 ✕
@@ -312,8 +312,8 @@
                   <div v-for="day in weekDays" :key="day" class="weekday">{{ day }}</div>
                 </div>
                 <div class="calendar-days">
-                  <div 
-                    v-for="day in calendarDays" 
+                  <div
+                    v-for="day in calendarDays"
                     :key="day.key"
                     :class="['calendar-day', {
                       'other-month': day.otherMonth,
@@ -456,10 +456,10 @@ export default {
       const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0)
       const daysInMonth = lastDay.getDate()
       const startingDayOfWeek = (firstDay.getDay() + 6) % 7 // Monday = 0
-      
+
       const today = new Date()
       const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-      
+
       // Previous month days
       const prevMonth = new Date(this.currentYear, this.currentMonth, 0)
       const prevMonthDays = prevMonth.getDate()
@@ -476,20 +476,20 @@ export default {
           key: `prev-${day}`
         })
       }
-      
+
       // Current month days
       const todayDate = new Date()
       todayDate.setHours(0, 0, 0, 0)
-      
+
       for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
         const date = new Date(this.currentYear, this.currentMonth, day)
         date.setHours(0, 0, 0, 0)
         const isToday = dateStr === todayStr
-        
+
         const isSelected = this.tempSelectedDate === dateStr || (!this.tempSelectedDate && this.formData.due_date === dateStr)
         const isDisabled = false
-        
+
         days.push({
           day: day,
           date: dateStr,
@@ -500,7 +500,7 @@ export default {
           key: `curr-${day}`
         })
       }
-      
+
       // Next month days (to fill the grid)
       const remainingDays = 42 - days.length // 6 weeks * 7 days
       for (let day = 1; day <= remainingDays; day++) {
@@ -515,7 +515,7 @@ export default {
           key: `next-${day}`
         })
       }
-      
+
       return days
     },
   },
@@ -763,7 +763,7 @@ export default {
         } else {
           data.due_date = null
         }
-        
+
         if (this.editingItem) {
           await itemService.update(this.editingItem.id, data)
           this.success = 'Item updated successfully!'
@@ -912,4 +912,3 @@ export default {
   width: 100%;
 }
 </style>
-

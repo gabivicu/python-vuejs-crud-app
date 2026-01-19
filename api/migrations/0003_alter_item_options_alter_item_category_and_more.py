@@ -4,60 +4,93 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0002_add_new_fields'),
+        ("api", "0002_add_new_fields"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='item',
-            options={'ordering': ['-created_at'], 'verbose_name': 'Item', 'verbose_name_plural': 'Items'},
+            name="item",
+            options={
+                "ordering": ["-created_at"],
+                "verbose_name": "Item",
+                "verbose_name_plural": "Items",
+            },
         ),
         migrations.AlterField(
-            model_name='item',
-            name='category',
-            field=models.CharField(choices=[('work', 'Work'), ('personal', 'Personal'), ('shopping', 'Shopping'), ('health', 'Health'), ('finance', 'Finance'), ('other', 'Other')], db_index=True, default='other', max_length=20),
+            model_name="item",
+            name="category",
+            field=models.CharField(
+                choices=[
+                    ("work", "Work"),
+                    ("personal", "Personal"),
+                    ("shopping", "Shopping"),
+                    ("health", "Health"),
+                    ("finance", "Finance"),
+                    ("other", "Other"),
+                ],
+                db_index=True,
+                default="other",
+                max_length=20,
+            ),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='completed',
+            model_name="item",
+            name="completed",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='created_at',
+            model_name="item",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True, db_index=True),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='due_date',
+            model_name="item",
+            name="due_date",
             field=models.DateTimeField(blank=True, db_index=True, null=True),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='priority',
-            field=models.CharField(choices=[('low', 'Low'), ('medium', 'Medium'), ('high', 'High'), ('urgent', 'Urgent')], db_index=True, default='medium', max_length=10),
+            model_name="item",
+            name="priority",
+            field=models.CharField(
+                choices=[
+                    ("low", "Low"),
+                    ("medium", "Medium"),
+                    ("high", "High"),
+                    ("urgent", "Urgent"),
+                ],
+                db_index=True,
+                default="medium",
+                max_length=10,
+            ),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='title',
+            model_name="item",
+            name="title",
             field=models.CharField(db_index=True, max_length=200),
         ),
         migrations.AddIndex(
-            model_name='item',
-            index=models.Index(fields=['completed', 'priority'], name='api_item_complet_0713fb_idx'),
+            model_name="item",
+            index=models.Index(
+                fields=["completed", "priority"], name="api_item_complet_0713fb_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='item',
-            index=models.Index(fields=['category', 'completed'], name='api_item_categor_7aefdd_idx'),
+            model_name="item",
+            index=models.Index(
+                fields=["category", "completed"], name="api_item_categor_7aefdd_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='item',
-            index=models.Index(fields=['due_date', 'completed'], name='api_item_due_dat_96fc59_idx'),
+            model_name="item",
+            index=models.Index(
+                fields=["due_date", "completed"], name="api_item_due_dat_96fc59_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='item',
-            index=models.Index(fields=['-created_at'], name='api_item_created_b60ae2_idx'),
+            model_name="item",
+            index=models.Index(
+                fields=["-created_at"], name="api_item_created_b60ae2_idx"
+            ),
         ),
     ]

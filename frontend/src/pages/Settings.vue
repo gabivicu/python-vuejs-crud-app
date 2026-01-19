@@ -3,7 +3,7 @@
     <div class="page-header">
       <h1>⚙️ Settings</h1>
     </div>
-    
+
     <div class="settings-content">
       <section class="settings-section">
         <h2>Appearance</h2>
@@ -12,8 +12,8 @@
             <label>Dark Mode</label>
             <p class="setting-description">Toggle between light and dark theme</p>
           </div>
-          <button 
-            @click="toggleDarkMode" 
+          <button
+            @click="toggleDarkMode"
             class="btn btn-secondary"
           >
             {{ darkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
@@ -228,4 +228,3 @@ export default {
   font-size: 1rem;
 }
 </style>
-
