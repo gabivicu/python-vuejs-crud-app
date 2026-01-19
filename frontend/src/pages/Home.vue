@@ -376,6 +376,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    createModalTrigger: {
+      type: Number,
+      default: 0
+    }
+  },
+  watch: {
+    createModalTrigger(newVal) {
+      if (newVal > 0) {
+        this.openCreateModal()
+      }
+    }
   },
   computed: {
     showDashboardProp() {
@@ -389,7 +400,6 @@ export default {
       error: null,
       success: null,
       showModal: false,
-      showDashboard: false,
       editingItem: null,
       selectedItems: [],
       searchQuery: '',

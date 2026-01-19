@@ -1,218 +1,234 @@
-# Django Vue.js CRUD Application
+# Django CRUD App with Vue.js Frontend
 
-A full-stack CRUD (Create, Read, Update, Delete) application built with Django REST Framework backend and Vue.js frontend.
+A comprehensive CRUD application demonstrating modern development practices, patterns, and best practices.
 
-## Features
+## 🚀 Features
 
-### Core CRUD Operations
-- ✅ Create new items
-- 📖 Read/List all items
-- ✏️ Update existing items
-- 🗑️ Delete items
-- ✅ Toggle item completion status
+### Backend (Django)
+- ✅ **Custom Managers & Querysets** - Advanced query patterns and reusable database logic
+- ✅ **Database Indexing** - Optimized queries with strategic indexes
+- ✅ **Caching** - Redis integration for performance optimization
+- ✅ **API Documentation** - OpenAPI/Swagger documentation with drf-spectacular
+- ✅ **Comprehensive Testing** - Unit tests, integration tests with pytest
+- ✅ **Service Layer** - Separation of concerns with service-oriented architecture
+- ✅ **Custom Middleware** - Request timing, rate limiting, logging, security headers
+- ✅ **Advanced Filtering** - Complex query building with custom manager methods
+- ✅ **Structured Logging** - Professional logging configuration
 
-### Advanced Features
-- 🔍 **Search & Filter** - Search by title/description/tags, filter by category, priority, status, due date
-- 📊 **Dashboard** - View statistics, completion rates, and charts
-- 🏷️ **Categories & Tags** - Organize items with categories (Work, Personal, Shopping, etc.) and tags
-- ⚡ **Priority Levels** - Set priority (Low, Medium, High, Urgent) with visual indicators
-- 📅 **Due Dates** - Set deadlines with overdue highlighting
-- 📈 **Sorting** - Sort by date, priority, title, etc.
-- ☑️ **Bulk Operations** - Select multiple items and perform batch actions
-- 🌙 **Dark Mode** - Toggle between light and dark themes
-- 📤 **Export** - Export items as JSON or CSV
-- 🎨 Modern, responsive UI with smooth animations
+### Frontend (Vue.js)
+- ✅ **State Management** - Pinia store for centralized state
+- ✅ **Composables** - Reusable composition API patterns
+- ✅ **Error Handling** - Centralized error handling with composables
+- ✅ **Loading States** - Professional loading state management
+- ✅ **Vue Router** - Multi-page navigation
+- ✅ **Responsive Design** - Mobile-first approach
+- ✅ **Dark Mode** - Theme switching capability
 
-## Project Structure
+### DevOps & Quality
+- ✅ **Docker** - Multi-stage Dockerfiles for production
+- ✅ **Docker Compose** - Complete development environment
+- ✅ **CI/CD** - GitHub Actions pipeline
+- ✅ **Pre-commit Hooks** - Code quality automation
+- ✅ **Code Formatting** - Black, isort, ESLint
+- ✅ **Type Checking** - mypy support
 
-```
-python-crud-app/
-├── crudapp/          # Django project settings
-├── api/              # Django app with models, views, serializers
-├── frontend/         # Vue.js frontend application
-│   ├── src/
-│   │   ├── App.vue   # Main Vue component
-│   │   ├── api.js    # API service for backend communication
-│   │   ├── main.js   # Vue app entry point
-│   │   └── style.css # Styles
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
-├── manage.py
-├── requirements.txt
-└── README.md
-```
+## 📋 Prerequisites
 
-## Prerequisites
+- Python 3.11+
+- Node.js 18+
+- Redis (optional, for caching)
+- Docker & Docker Compose (optional)
 
-- Python 3.8+
-- Node.js 16+ and npm
-- pip (Python package manager)
+## 🛠️ Installation
 
-## Setup Instructions
+### Local Development
 
-### Backend Setup (Django)
-
-1. **Create a virtual environment** (recommended):
+1. **Clone the repository**
    ```bash
-   python3 -m venv venv
+   git clone https://github.com/gabivicu/python-vuejs-crud-app.git
+   cd python-vuejs-crud-app
+   ```
+
+2. **Backend Setup**
+   ```bash
+   # Create virtual environment
+   python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-2. **Install Python dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run database migrations**:
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
    
-   **Important:** After pulling the latest changes with new features, you must run migrations to add the new database fields (category, priority, due_date, tags).
-
-4. **Create a superuser** (optional, for admin access):
-   ```bash
+   # Install dependencies
+   pip install -r requirements.txt
+   
+   # Run migrations
+   python manage.py migrate
+   
+   # Create superuser (optional)
    python manage.py createsuperuser
-   ```
-
-5. **Start the Django development server**:
-   ```bash
+   
+   # Run server
    python manage.py runserver
    ```
 
-   The backend API will be available at `http://localhost:8000`
-   - API endpoints: `http://localhost:8000/api/items/`
-   - Admin panel: `http://localhost:8000/admin/`
-
-### Frontend Setup (Vue.js)
-
-1. **Navigate to the frontend directory**:
+3. **Frontend Setup**
    ```bash
    cd frontend
-   ```
-
-2. **Install Node.js dependencies**:
-   ```bash
    npm install
-   ```
-
-3. **Start the Vue.js development server**:
-   ```bash
    npm run dev
    ```
 
-   The frontend will be available at `http://localhost:5173`
+4. **Access the application**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:8000
+   - API Documentation: http://localhost:8000/api/schema/swagger-ui/
+   - Admin Panel: http://localhost:8000/admin
 
-## Usage
-
-1. Make sure both servers are running:
-   - Django backend on `http://localhost:8000`
-   - Vue.js frontend on `http://localhost:5173`
-
-2. Open your browser and navigate to `http://localhost:5173`
-
-3. You can now:
-   - **Create items** with category, priority, due date, and tags
-   - **Search** items using the search bar
-   - **Filter** by category, priority, status, or due date
-   - **Sort** items by various criteria
-   - **View Dashboard** for statistics and charts
-   - **Select multiple items** for bulk operations
-   - **Toggle Dark Mode** for comfortable viewing
-   - **Export** your data as JSON or CSV
-   - **Edit/Delete** individual items
-
-## API Endpoints
-
-The Django REST Framework provides the following endpoints:
-
-### Basic CRUD
-- `GET /api/items/` - List all items (with optional filters)
-- `POST /api/items/` - Create a new item
-- `GET /api/items/{id}/` - Get a specific item
-- `PUT /api/items/{id}/` - Update an item
-- `DELETE /api/items/{id}/` - Delete an item
-
-### Advanced Endpoints
-- `GET /api/items/stats/` - Get statistics and analytics
-
-### Query Parameters for Filtering
-
-- `?search=keyword` - Search in title, description, or tags
-- `?category=work` - Filter by category (work, personal, shopping, health, finance, other)
-- `?priority=high` - Filter by priority (low, medium, high, urgent)
-- `?completed=true` - Filter by completion status
-- `?due_filter=overdue` - Filter by due date (overdue, today, upcoming)
-- `?ordering=-created_at` - Sort results (created_at, updated_at, due_date, priority, title)
-
-### Example API Requests
+### Docker Setup
 
 ```bash
-# Create a new item with all fields
-curl -X POST http://localhost:8000/api/items/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "My Task",
-    "description": "Task description",
-    "category": "work",
-    "priority": "high",
-    "due_date": "2024-12-31T23:59:59Z",
-    "tags": "urgent, important",
-    "completed": false
-  }'
+# Build and run all services
+docker-compose up --build
 
-# Search items
-curl "http://localhost:8000/api/items/?search=meeting"
+# Run in background
+docker-compose up -d
 
-# Filter by category and priority
-curl "http://localhost:8000/api/items/?category=work&priority=high"
+# View logs
+docker-compose logs -f
 
-# Get statistics
-curl "http://localhost:8000/api/items/stats/"
+# Stop services
+docker-compose down
 ```
 
-## Technologies Used
+## 🧪 Testing
 
-### Backend
-- Django 4.2.7
-- Django REST Framework 3.14.0
-- django-cors-headers 4.3.1
+### Backend Tests
+```bash
+# Run all tests
+pytest
 
-### Frontend
-- Vue.js 3.3.4
-- Vite 5.0.0
-- Axios 1.6.0
+# Run with coverage
+pytest --cov=api --cov-report=html
 
-## Development
+# Run specific test file
+pytest api/tests/test_models.py
+```
 
-### Running Tests
-
-Currently, no tests are included. You can add tests using:
-- Django's test framework for backend
-- Vue Test Utils for frontend
-
-### Building for Production
-
-**Frontend:**
+### Frontend Tests
 ```bash
 cd frontend
-npm run build
+npm run test
 ```
 
-The built files will be in `frontend/dist/`
+## 📚 API Documentation
 
-**Backend:**
-Follow Django deployment best practices for production deployment.
+Interactive API documentation is available at:
+- Swagger UI: http://localhost:8000/api/schema/swagger-ui/
+- ReDoc: http://localhost:8000/api/schema/redoc/
+- OpenAPI Schema: http://localhost:8000/api/schema/
 
-## Troubleshooting
+## 🏗️ Architecture
 
-- **CORS errors**: Make sure `django-cors-headers` is installed and configured in `settings.py`
-- **API connection errors**: Verify Django server is running on port 8000
-- **Frontend not loading**: Check that Node.js dependencies are installed and Vite dev server is running
+### Backend Structure
+```
+api/
+├── models.py          # Database models with custom managers
+├── managers.py        # Custom querysets and managers
+├── serializers.py     # DRF serializers
+├── views.py           # ViewSets with advanced patterns
+├── services.py        # Business logic layer
+├── urls.py            # URL routing
+└── tests/             # Comprehensive test suite
+    ├── test_models.py
+    ├── test_managers.py
+    └── test_views.py
+```
 
-## License
+### Frontend Structure
+```
+frontend/src/
+├── stores/            # Pinia stores
+│   └── items.js
+├── composables/       # Reusable composition functions
+│   ├── useDebounce.js
+│   ├── useErrorHandler.js
+│   └── useLoading.js
+├── components/        # Vue components
+├── pages/             # Route pages
+├── router/            # Vue Router configuration
+└── api.js             # API service layer
+```
 
-This project is open source and available for educational purposes.
+## 🔧 Configuration
 
+### Environment Variables
+Create a `.env` file in the root directory:
+```env
+DEBUG=True
+SECRET_KEY=your-secret-key-here
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+### Caching
+The application uses Redis for caching. If Redis is not available, it falls back to local memory cache.
+
+## 📝 Code Quality
+
+### Pre-commit Hooks
+```bash
+# Install pre-commit
+pip install pre-commit
+
+# Install hooks
+pre-commit install
+
+# Run manually
+pre-commit run --all-files
+```
+
+### Code Formatting
+```bash
+# Format Python code
+black .
+isort .
+
+# Format frontend code
+cd frontend
+npm run format
+```
+
+## 🚢 Deployment
+
+### Production Checklist
+- [ ] Set `DEBUG=False` in production
+- [ ] Configure proper `ALLOWED_HOSTS`
+- [ ] Use environment variables for secrets
+- [ ] Set up proper database (PostgreSQL recommended)
+- [ ] Configure Redis for caching
+- [ ] Set up static file serving
+- [ ] Configure SSL/TLS
+- [ ] Set up monitoring and logging
+- [ ] Configure backup strategy
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+## 👨‍💻 Author
+
+**Gabriel Vicu**
+- GitHub: [@gabivicu](https://github.com/gabivicu)
+
+## 🙏 Acknowledgments
+
+- Django REST Framework
+- Vue.js
+- Pinia
+- drf-spectacular
+- All contributors and open-source libraries used

@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: crudapp-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - crudapp-network
+
+  # Django backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crudapp-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - crudapp-network
+    restart: unless-stopped
+
+  # Vue.js frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: crudapp-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - crudapp-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  static_volume:
+
+networks:
+  crudapp-network:
+    driver: bridge

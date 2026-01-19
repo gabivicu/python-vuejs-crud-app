@@ -23,7 +23,8 @@
       <!-- Router View -->
       <router-view 
         :showDashboard="showDashboard"
-        ref="routerView"
+        :createModalTrigger="createModalTrigger"
+        @update:createModalTrigger="createModalTrigger = $event"
       />
     </div>
   </div>
@@ -41,6 +42,7 @@ export default {
     return {
       darkMode: localStorage.getItem('darkMode') === 'true',
       showDashboard: false,
+      createModalTrigger: 0,
     }
   },
   mounted() {
@@ -62,10 +64,8 @@ export default {
       this.showDashboard = !this.showDashboard
     },
     triggerCreateModal() {
-      // Call openCreateModal on Home component if it exists
-      if (this.$refs.routerView && this.$refs.routerView.openCreateModal) {
-        this.$refs.routerView.openCreateModal()
-      }
+      // Trigger modal opening by incrementing the counter
+      this.createModalTrigger++
     },
   },
 }

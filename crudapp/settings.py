@@ -34,6 +34,13 @@ INSTALLED_APPS = [
     'api',
 ]
 
+# Optional: Add drf-spectacular if available
+try:
+    import drf_spectacular
+    INSTALLED_APPS.append('drf_spectacular')
+except ImportError:
+    pass
+
 MIDDLEWARE = [
     # Built-in Django middleware
     'django.middleware.security.SecurityMiddleware',
@@ -132,6 +139,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -144,8 +152,71 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
 }
+
+# Optional: Add drf-spectacular schema class if available
+try:
+    import drf_spectacular
+    REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
+    
+    # API Documentation (drf-spectacular)
+    SPECTACULAR_SETTINGS = {
+        'TITLE': 'Django CRUD API',
+        'DESCRIPTION': 'A comprehensive CRUD API with advanced Django patterns',
+        'VERSION': '1.0.0',
+        'SERVE_INCLUDE_SCHEMA': False,
+        'COMPONENT_SPLIT_REQUEST': True,
+        'SCHEMA_PATH_PREFIX': '/api/',
+    }
+except ImportError:
+    pass
+
+# Caching configuration
+# Try Redis first, fallback to local memory cache
+try:
+    import redis
+    try:
+        r = redis.Redis(host='127.0.0.1', port=6379, db=1, socket_connect_timeout=1)
+        r.ping()
+        # Redis is available
+        CACHES = {
+            'default': {
+                'BACKEND': 'django_redis.cache.RedisCache',
+                'LOCATION': 'redis://127.0.0.1:6379/1',
+                'OPTIONS': {
+                    'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                    'SOCKET_CONNECT_TIMEOUT': 1,
+                    'SOCKET_TIMEOUT': 1,
+                },
+                'KEY_PREFIX': 'crudapp',
+                'TIMEOUT': 300,  # 5 minutes default timeout
+            }
+        }
+    except (redis.ConnectionError, redis.TimeoutError, Exception):
+        # Redis is installed but not available, use local memory cache
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                'LOCATION': 'unique-snowflake',
+            }
+        }
+except ImportError:
+    # Redis module is not installed, use local memory cache
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
 
 # CORS configuration
 CORS_ALLOWED_ORIGINS = [
