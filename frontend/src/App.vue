@@ -1,7 +1,7 @@
 <template>
   <div :class="['app-container', { 'dark-mode': darkMode }]">
-    <div class="container">
-      <!-- Header with Hamburger Menu -->
+    <!-- Header with Hamburger Menu (hidden on landing page) -->
+    <div v-if="$route.path !== '/'" class="container">
       <div class="header">
         <div class="header-left">
           <HamburgerMenu />
@@ -10,7 +10,7 @@
             {{ darkMode ? '☀️' : '🌙' }}
           </button>
         </div>
-        <div class="header-actions" v-if="$route.path === '/'">
+        <div class="header-actions" v-if="$route.path === '/app'">
           <button @click="toggleDashboard" class="btn btn-secondary">
             📊 Dashboard
           </button>
@@ -19,8 +19,10 @@
           </button>
         </div>
       </div>
+    </div>
 
-      <!-- Router View -->
+    <!-- Router View -->
+    <div :class="{ 'container': $route.path !== '/' }">
       <router-view
         :showDashboard="showDashboard"
         :createModalTrigger="createModalTrigger"

@@ -46,7 +46,8 @@ export default {
     return {
       isOpen: false,
       menuItems: [
-        { path: '/', label: 'Home', icon: '🏠' },
+        { path: '/', label: 'Landing', icon: '🚀' },
+        { path: '/app', label: 'My Tasks', icon: '📝' },
         { path: '/about', label: 'About', icon: 'ℹ️' },
         { path: '/settings', label: 'Settings', icon: '⚙️' },
       ],
