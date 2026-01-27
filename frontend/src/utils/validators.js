@@ -27,7 +27,7 @@ export function normalizePage(page) {
  * @returns {boolean} - True if valid pagination response
  */
 export function isValidPaginationResponse(response) {
-  return (
+  return !!(
     response &&
     typeof response === 'object' &&
     Array.isArray(response.results) &&

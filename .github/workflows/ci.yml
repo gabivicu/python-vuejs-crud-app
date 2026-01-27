@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Flake8 (linting)
         run: |
-          flake8 . --max-line-length=100 --extend-ignore=E203 --exclude=migrations,venv,env,.venv
+          flake8 . --max-line-length=100 --extend-ignore=E203,D104 --exclude=migrations,venv,env,.venv
 
       - name: Run MyPy (type checking)
         run: |

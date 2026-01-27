@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { PAGINATION } from '../utils/constants'
-import { normalizePage } from '../utils/validators'
+import { normalizePage, isValidPage } from '../utils/validators'
 
 export function usePagination() {
   const pagination = reactive({
@@ -59,6 +59,10 @@ export function usePagination() {
   }
 
   const goToPage = page => {
+    // Check if page is valid before normalizing
+    if (!isValidPage(page)) {
+      return false
+    }
     const normalizedPage = normalizePage(page)
     if (normalizedPage >= PAGINATION.MIN_PAGE && normalizedPage <= pagination.totalPages) {
       pagination.currentPage = normalizedPage

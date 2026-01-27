@@ -62,3 +62,29 @@ repos:
         files: ^frontend/.*\.(js|vue|ts|tsx)$
         pass_filenames: false
         always_run: false
+
+  # Backend: Unit Tests (pytest)
+  - repo: local
+    hooks:
+      - id: pytest-backend
+        name: Backend Unit Tests
+        entry: bash -c 'python -m pytest api/tests/ -v --tb=short'
+        language: system
+        files: ^(api/|crudapp/|manage\.py|pytest\.ini|requirements\.txt|\.pre-commit-config\.yaml)
+        pass_filenames: false
+        always_run: false
+        stages: [commit]
+        verbose: true
+
+  # Frontend: Unit Tests (vitest)
+  - repo: local
+    hooks:
+      - id: vitest-frontend
+        name: Frontend Unit Tests
+        entry: bash -c 'cd frontend && npm test -- --run'
+        language: system
+        files: ^frontend/.*\.(js|vue|ts|tsx|json)$
+        pass_filenames: false
+        always_run: false
+        stages: [commit]
+        verbose: true
