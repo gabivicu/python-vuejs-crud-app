@@ -12,10 +12,7 @@
             <label>Dark Mode</label>
             <p class="setting-description">Toggle between light and dark theme</p>
           </div>
-          <button
-            @click="toggleDarkMode"
-            class="btn btn-secondary"
-          >
+          <button class="btn btn-secondary" @click="toggleDarkMode">
             {{ darkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
           </button>
         </div>
@@ -29,12 +26,8 @@
             <p class="setting-description">Download your data as JSON or CSV</p>
           </div>
           <div class="setting-actions">
-            <button @click="exportAllJSON" class="btn btn-secondary btn-small">
-              Export JSON
-            </button>
-            <button @click="exportAllCSV" class="btn btn-secondary btn-small">
-              Export CSV
-            </button>
+            <button class="btn btn-secondary btn-small" @click="exportAllJSON">Export JSON</button>
+            <button class="btn btn-secondary btn-small" @click="exportAllCSV">Export CSV</button>
           </div>
         </div>
       </section>
@@ -108,7 +101,17 @@ export default {
       try {
         const response = await itemService.getAll()
         const items = response.data.results || response.data
-        const headers = ['ID', 'Title', 'Description', 'Category', 'Priority', 'Completed', 'Due Date', 'Tags', 'Created At']
+        const headers = [
+          'ID',
+          'Title',
+          'Description',
+          'Category',
+          'Priority',
+          'Completed',
+          'Due Date',
+          'Tags',
+          'Created At',
+        ]
         const rows = items.map(item => [
           item.id,
           item.title,
@@ -122,7 +125,7 @@ export default {
         ])
         const csvContent = [
           headers.join(','),
-          ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+          ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
         ].join('\n')
         const blob = new Blob([csvContent], { type: 'text/csv' })
         const url = URL.createObjectURL(blob)

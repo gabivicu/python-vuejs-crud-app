@@ -10,34 +10,34 @@ jobs:
   backend-lint:
     name: Backend Linting
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run Black (code formatting check)
         run: |
           black --check --diff .
-      
+
       - name: Run isort (import sorting check)
         run: |
           isort --check-only --diff .
-      
+
       - name: Run Flake8 (linting)
         run: |
           flake8 . --max-line-length=100 --extend-ignore=E203 --exclude=migrations,venv,env,.venv
-      
+
       - name: Run MyPy (type checking)
         run: |
           mypy api/ crudapp/ --ignore-missing-imports || true
@@ -46,34 +46,34 @@ jobs:
   backend-test:
     name: Backend Tests
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run migrations
         env:
           DJANGO_SETTINGS_MODULE: crudapp.settings
         run: |
           python manage.py migrate --noinput
-      
+
       - name: Run tests with pytest
         env:
           DJANGO_SETTINGS_MODULE: crudapp.settings
         run: |
           pytest --cov=api --cov-report=xml --cov-report=term-missing -v
-      
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
@@ -85,22 +85,22 @@ jobs:
   frontend-lint:
     name: Frontend Linting & Build
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-      
+
       - name: Install dependencies
         working-directory: ./frontend
         run: npm ci
-      
+
       - name: Check if ESLint is configured
         working-directory: ./frontend
         run: |
@@ -110,11 +110,11 @@ jobs:
             echo "ESLint not configured, skipping lint check"
           fi
         continue-on-error: true
-      
+
       - name: Build frontend
         working-directory: ./frontend
         run: npm run build
-      
+
       - name: Check build artifacts
         run: |
           if [ -d "frontend/dist" ]; then
@@ -128,27 +128,27 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install safety bandit
-      
+
       - name: Run Safety (check for vulnerable dependencies)
         run: |
           safety check --file requirements.txt || true
         continue-on-error: true
-      
+
       - name: Run Bandit (security linting)
         run: |
           bandit -r api/ crudapp/ -f json -o bandit-report.json || true
@@ -157,14 +157,14 @@ jobs:
   docker-build:
     name: Docker Build Check
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Build backend Docker image
         uses: docker/build-push-action@v5
         with:
@@ -174,7 +174,7 @@ jobs:
           tags: crudapp-backend:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      
+
       - name: Build frontend Docker image
         uses: docker/build-push-action@v5
         with:

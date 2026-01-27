@@ -6,12 +6,7 @@ import { PAGINATION } from './constants'
  * @returns {boolean} - True if valid
  */
 export function isValidPage(page) {
-  return (
-    typeof page === 'number' &&
-    !isNaN(page) &&
-    isFinite(page) &&
-    page >= PAGINATION.MIN_PAGE
-  )
+  return typeof page === 'number' && !isNaN(page) && isFinite(page) && page >= PAGINATION.MIN_PAGE
 }
 
 /**

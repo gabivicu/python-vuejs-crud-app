@@ -1,22 +1,18 @@
 /**
  * Composable for infinite scroll functionality
  * Implements Single Responsibility Principle - handles only scroll detection
- * 
+ *
  * @param {Function} onLoadMore - Callback function when scroll reaches threshold
  * @param {Object} options - Configuration options
  * @returns {Object} - Reactive refs and methods for infinite scroll
  */
 export function useInfiniteScroll(onLoadMore, options = {}) {
-  const {
-    rootMargin = '100px',
-    threshold = 0.1,
-    root = null
-  } = options
+  const { rootMargin = '100px', threshold = 0.1, root = null } = options
 
   let observer = null
   const loadMoreTriggerRef = { value: null }
 
-  const setupObserver = (element) => {
+  const setupObserver = element => {
     if (!element || !window.IntersectionObserver) {
       return
     }
@@ -24,10 +20,10 @@ export function useInfiniteScroll(onLoadMore, options = {}) {
     const observerOptions = {
       root,
       rootMargin,
-      threshold
+      threshold,
     }
 
-    observer = new IntersectionObserver((entries) => {
+    observer = new IntersectionObserver(entries => {
       const entry = entries[0]
       if (entry?.isIntersecting) {
         onLoadMore()
@@ -44,7 +40,7 @@ export function useInfiniteScroll(onLoadMore, options = {}) {
     }
   }
 
-  const observe = (element) => {
+  const observe = element => {
     disconnect()
     if (element) {
       loadMoreTriggerRef.value = element
@@ -55,6 +51,6 @@ export function useInfiniteScroll(onLoadMore, options = {}) {
   return {
     loadMoreTriggerRef,
     observe,
-    disconnect
+    disconnect,
   }
 }

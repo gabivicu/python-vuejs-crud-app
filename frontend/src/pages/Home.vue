@@ -1,7 +1,7 @@
 <template>
   <div class="page-content">
     <!-- Header Actions (moved from App.vue) -->
-    <div class="header-actions-mobile" v-if="false" style="display: none;">
+    <div v-if="false" class="header-actions-mobile" style="display: none">
       <!-- Hidden, actions are in App.vue header -->
     </div>
     <!-- Dashboard -->
@@ -32,7 +32,11 @@
         <div class="chart-section">
           <h3>By Priority</h3>
           <div class="chart-bars">
-            <div v-for="(count, priority) in stats.priority_stats" :key="priority" class="chart-bar">
+            <div
+              v-for="(count, priority) in stats.priority_stats"
+              :key="priority"
+              class="chart-bar"
+            >
               <div class="bar-label">{{ priority }}</div>
               <div class="bar-container">
                 <div
@@ -47,7 +51,11 @@
         <div class="chart-section">
           <h3>By Category</h3>
           <div class="chart-bars">
-            <div v-for="(count, category) in stats.category_stats" :key="category" class="chart-bar">
+            <div
+              v-for="(count, category) in stats.category_stats"
+              :key="category"
+              class="chart-bar"
+            >
               <div class="bar-label">{{ category }}</div>
               <div class="bar-container">
                 <div
@@ -74,7 +82,7 @@
         />
       </div>
       <div class="filters-row">
-        <select v-model="filters.category" @change="applyFilters" class="filter-select">
+        <select v-model="filters.category" class="filter-select" @change="applyFilters">
           <option value="">All Categories</option>
           <option value="work">Work</option>
           <option value="personal">Personal</option>
@@ -83,42 +91,42 @@
           <option value="finance">Finance</option>
           <option value="other">Other</option>
         </select>
-        <select v-model="filters.priority" @change="applyFilters" class="filter-select">
+        <select v-model="filters.priority" class="filter-select" @change="applyFilters">
           <option value="">All Priorities</option>
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
           <option value="urgent">Urgent</option>
         </select>
-        <select v-model="filters.completed" @change="applyFilters" class="filter-select">
+        <select v-model="filters.completed" class="filter-select" @change="applyFilters">
           <option value="">All Status</option>
           <option value="true">Completed</option>
           <option value="false">Pending</option>
         </select>
-        <select v-model="filters.due_filter" @change="applyFilters" class="filter-select">
+        <select v-model="filters.due_filter" class="filter-select" @change="applyFilters">
           <option value="">All Dates</option>
           <option value="overdue">Overdue</option>
           <option value="today">Today</option>
           <option value="upcoming">Upcoming</option>
         </select>
-        <select v-model="sortBy" @change="applyFilters" class="filter-select">
+        <select v-model="sortBy" class="filter-select" @change="applyFilters">
           <option value="-created_at">Newest First</option>
           <option value="created_at">Oldest First</option>
           <option value="due_date">Due Date</option>
           <option value="-priority">Priority</option>
           <option value="title">Title A-Z</option>
         </select>
-        <button @click="clearFilters" class="btn btn-secondary btn-small">Clear Filters</button>
+        <button class="btn btn-secondary btn-small" @click="clearFilters">Clear Filters</button>
       </div>
-      <div class="bulk-actions" v-if="selectedItems.length > 0">
+      <div v-if="selectedItems.length > 0" class="bulk-actions">
         <span class="selected-count">{{ selectedItems.length }} selected</span>
-        <button @click="bulkComplete" class="btn btn-success btn-small">Mark Complete</button>
-        <button @click="bulkDelete" class="btn btn-danger btn-small">Delete Selected</button>
-        <button @click="clearSelection" class="btn btn-secondary btn-small">Clear Selection</button>
+        <button class="btn btn-success btn-small" @click="bulkComplete">Mark Complete</button>
+        <button class="btn btn-danger btn-small" @click="bulkDelete">Delete Selected</button>
+        <button class="btn btn-secondary btn-small" @click="clearSelection">Clear Selection</button>
       </div>
       <div class="export-actions">
-        <button @click="exportJSON" class="btn btn-secondary btn-small">Export JSON</button>
-        <button @click="exportCSV" class="btn btn-secondary btn-small">Export CSV</button>
+        <button class="btn btn-secondary btn-small" @click="exportJSON">Export JSON</button>
+        <button class="btn btn-secondary btn-small" @click="exportCSV">Export CSV</button>
       </div>
     </div>
 
@@ -131,9 +139,7 @@
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading">
-      Loading items...
-    </div>
+    <div v-if="loading" class="loading">Loading items...</div>
 
     <!-- Empty State -->
     <div v-else-if="items.length === 0" class="empty-state">
@@ -147,7 +153,10 @@
       <div
         v-for="item in items"
         :key="item.id"
-        :class="['item-card', { 'selected': selectedItems.includes(item.id), 'overdue': isOverdue(item) }]"
+        :class="[
+          'item-card',
+          { selected: selectedItems.includes(item.id), overdue: isOverdue(item) },
+        ]"
       >
         <div class="item-checkbox">
           <input
@@ -161,38 +170,40 @@
             <div class="item-header">
               <h3 class="item-title">{{ item.title }}</h3>
               <div class="item-badges">
-                <span :class="['badge', `badge-category-${item.category || 'other'}`]" title="Category">
+                <span
+                  :class="['badge', `badge-category-${item.category || 'other'}`]"
+                  title="Category"
+                >
                   {{ getCategoryLabel(item.category) }}
                 </span>
                 <span :class="['badge', `badge-${item.priority || 'medium'}`]" title="Priority">
                   {{ getPriorityLabel(item.priority) }}
                 </span>
-                <span :class="['badge', item.completed ? 'badge-completed' : 'badge-pending']" title="Status">
+                <span
+                  :class="['badge', item.completed ? 'badge-completed' : 'badge-pending']"
+                  title="Status"
+                >
                   {{ item.completed ? 'Completed' : 'Pending' }}
                 </span>
               </div>
             </div>
             <p v-if="item.description" class="item-description">{{ item.description }}</p>
-            <div class="item-tags" v-if="item.tags_list && item.tags_list.length > 0">
+            <div v-if="item.tags_list && item.tags_list.length > 0" class="item-tags">
               <span v-for="tag in item.tags_list" :key="tag" class="tag">{{ tag }}</span>
             </div>
             <div class="item-meta">
               <span>Created: {{ formatDate(item.created_at) }}</span>
-              <span v-if="item.due_date" :class="['due-date', { 'overdue': isOverdue(item) }]">
+              <span v-if="item.due_date" :class="['due-date', { overdue: isOverdue(item) }]">
                 Due: {{ formatDate(item.due_date) }}
               </span>
             </div>
           </div>
           <div class="item-actions">
-            <button @click="toggleComplete(item)" class="btn btn-small btn-success">
+            <button class="btn btn-small btn-success" @click="toggleComplete(item)">
               {{ item.completed ? 'Mark Pending' : 'Mark Complete' }}
             </button>
-            <button @click="openEditModal(item)" class="btn btn-small btn-secondary">
-              Edit
-            </button>
-            <button @click="openDeleteModal(item)" class="btn btn-small btn-danger">
-              Delete
-            </button>
+            <button class="btn btn-small btn-secondary" @click="openEditModal(item)">Edit</button>
+            <button class="btn btn-small btn-danger" @click="openDeleteModal(item)">Delete</button>
           </div>
         </div>
       </div>
@@ -208,23 +219,35 @@
       </div>
     </div>
 
+    <!-- Bulk Action Confirmation Modal -->
+    <BulkActionModal
+      :is-open="showBulkActionModal"
+      :action-type="bulkActionType"
+      :items="getSelectedItemsDetails()"
+      :is-processing="bulkActionProcessing"
+      @close="closeBulkActionModal"
+      @confirm="handleBulkActionConfirm"
+    />
+
     <!-- Delete Confirmation Modal -->
     <div :class="['modal', { active: showDeleteModal }]" @click.self="closeDeleteModal">
       <div class="modal-content delete-modal">
         <div class="modal-header">
           <h2>⚠️ Confirm Delete</h2>
-          <button @click="closeDeleteModal" class="close-btn">&times;</button>
+          <button class="close-btn" @click="closeDeleteModal">&times;</button>
         </div>
-        <div class="delete-modal-content" v-if="itemToDelete">
+        <div v-if="itemToDelete" class="delete-modal-content">
           <div class="delete-warning">
-            <p class="warning-text">Are you sure you want to delete this item? This action cannot be undone.</p>
+            <p class="warning-text">
+              Are you sure you want to delete this item? This action cannot be undone.
+            </p>
           </div>
           <div class="item-details">
             <div class="detail-row">
               <span class="detail-label">Title:</span>
               <span class="detail-value">{{ itemToDelete.title }}</span>
             </div>
-            <div class="detail-row" v-if="itemToDelete.description">
+            <div v-if="itemToDelete.description" class="detail-row">
               <span class="detail-label">Description:</span>
               <span class="detail-value">{{ itemToDelete.description }}</span>
             </div>
@@ -242,17 +265,22 @@
             </div>
             <div class="detail-row">
               <span class="detail-label">Status:</span>
-              <span :class="['badge', itemToDelete.completed ? 'badge-completed' : 'badge-pending']">
+              <span
+                :class="['badge', itemToDelete.completed ? 'badge-completed' : 'badge-pending']"
+              >
                 {{ itemToDelete.completed ? 'Completed' : 'Pending' }}
               </span>
             </div>
-            <div class="detail-row" v-if="itemToDelete.due_date">
+            <div v-if="itemToDelete.due_date" class="detail-row">
               <span class="detail-label">Due Date:</span>
-              <span class="detail-value" :class="{ 'overdue': isOverdue(itemToDelete) }">
+              <span class="detail-value" :class="{ overdue: isOverdue(itemToDelete) }">
                 {{ formatDate(itemToDelete.due_date) }}
               </span>
             </div>
-            <div class="detail-row" v-if="itemToDelete.tags_list && itemToDelete.tags_list.length > 0">
+            <div
+              v-if="itemToDelete.tags_list && itemToDelete.tags_list.length > 0"
+              class="detail-row"
+            >
               <span class="detail-label">Tags:</span>
               <div class="tags-list">
                 <span v-for="tag in itemToDelete.tags_list" :key="tag" class="tag">{{ tag }}</span>
@@ -265,12 +293,8 @@
           </div>
         </div>
         <div class="modal-actions delete-actions">
-          <button @click="closeDeleteModal" class="btn btn-secondary">
-            Cancel
-          </button>
-          <button @click="confirmDelete" class="btn btn-danger">
-            Delete Item
-          </button>
+          <button class="btn btn-secondary" @click="closeDeleteModal">Cancel</button>
+          <button class="btn btn-danger" @click="confirmDelete">Delete Item</button>
         </div>
       </div>
     </div>
@@ -280,7 +304,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>{{ editingItem ? 'Edit Item' : 'Create New Item' }}</h2>
-          <button @click="closeModal" class="close-btn">&times;</button>
+          <button class="close-btn" @click="closeModal">&times;</button>
         </div>
         <form @submit.prevent="saveItem">
           <div class="form-group">
@@ -336,36 +360,51 @@
               <button
                 v-if="formData.due_date"
                 type="button"
-                @click.stop="clearDueDate"
                 class="btn-clear-date-small"
+                @click.stop="clearDueDate"
               >
                 ✕
               </button>
               <div v-if="showCalendar" class="calendar-popup" @click.stop>
                 <div class="calendar-header">
-                  <button @click.stop="previousMonth" type="button" class="calendar-nav-btn">‹</button>
+                  <button type="button" class="calendar-nav-btn" @click.stop="previousMonth">
+                    ‹
+                  </button>
                   <div class="calendar-month-year">
-                    <span class="month-selector" @click.stop="showMonthSelector = !showMonthSelector">
+                    <span
+                      class="month-selector"
+                      @click.stop="showMonthSelector = !showMonthSelector"
+                    >
                       {{ currentMonthName }}
                     </span>
                     <span class="year-selector" @click.stop="showYearSelector = !showYearSelector">
                       {{ currentYear }}
                     </span>
                   </div>
-                  <button @click.stop="nextMonth" type="button" class="calendar-nav-btn">›</button>
+                  <button type="button" class="calendar-nav-btn" @click.stop="nextMonth">›</button>
                 </div>
                 <!-- Year Selector -->
                 <div v-if="showYearSelector" class="year-selector-popup" @click.stop>
                   <div class="year-selector-header">
-                    <button @click.stop="previousYearRange" type="button" class="year-nav-btn">‹‹</button>
+                    <button type="button" class="year-nav-btn" @click.stop="previousYearRange">
+                      ‹‹
+                    </button>
                     <span class="year-range">{{ yearRangeStart }} - {{ yearRangeEnd }}</span>
-                    <button @click.stop="nextYearRange" type="button" class="year-nav-btn">››</button>
+                    <button type="button" class="year-nav-btn" @click.stop="nextYearRange">
+                      ››
+                    </button>
                   </div>
                   <div class="year-grid">
                     <div
                       v-for="year in availableYearsList"
                       :key="year"
-                      :class="['year-item', { 'selected': year === currentYear, 'current': year === new Date().getFullYear() }]"
+                      :class="[
+                        'year-item',
+                        {
+                          selected: year === currentYear,
+                          current: year === new Date().getFullYear(),
+                        },
+                      ]"
                       @click.stop="selectYear(year)"
                     >
                       {{ year }}
@@ -378,7 +417,7 @@
                     <div
                       v-for="(month, index) in months"
                       :key="index"
-                      :class="['month-item', { 'selected': index === currentMonth }]"
+                      :class="['month-item', { selected: index === currentMonth }]"
                       @click.stop="selectMonth(index)"
                     >
                       {{ month }}
@@ -392,20 +431,27 @@
                   <div
                     v-for="day in calendarDays"
                     :key="day.key"
-                    :class="['calendar-day', {
-                      'other-month': day.otherMonth,
-                      'today': day.isToday,
-                      'selected': day.isSelected,
-                      'disabled': day.isDisabled
-                    }]"
+                    :class="[
+                      'calendar-day',
+                      {
+                        'other-month': day.otherMonth,
+                        today: day.isToday,
+                        selected: day.isSelected,
+                        disabled: day.isDisabled,
+                      },
+                    ]"
                     @click.stop="selectDate(day)"
                   >
                     {{ day.day }}
                   </div>
                 </div>
                 <div class="calendar-actions">
-                  <button @click.stop="clearDueDate" type="button" class="btn-calendar-cancel">Cancel</button>
-                  <button @click.stop="applyDate" type="button" class="btn-calendar-apply">Apply</button>
+                  <button type="button" class="btn-calendar-cancel" @click.stop="clearDueDate">
+                    Cancel
+                  </button>
+                  <button type="button" class="btn-calendar-apply" @click.stop="applyDate">
+                    Apply
+                  </button>
                 </div>
               </div>
             </div>
@@ -421,18 +467,12 @@
           </div>
           <div class="form-group">
             <div class="checkbox-group">
-              <input
-                id="completed"
-                v-model="formData.completed"
-                type="checkbox"
-              />
+              <input id="completed" v-model="formData.completed" type="checkbox" />
               <label for="completed">Completed</label>
             </div>
           </div>
           <div class="form-actions">
-            <button type="button" @click="closeModal" class="btn btn-secondary">
-              Cancel
-            </button>
+            <button type="button" class="btn btn-secondary" @click="closeModal">Cancel</button>
             <button type="submit" class="btn btn-primary">
               {{ editingItem ? 'Update' : 'Create' }}
             </button>
@@ -445,9 +485,13 @@
 
 <script>
 import { itemService } from '../api'
+import BulkActionModal from '../components/BulkActionModal.vue'
 
 export default {
   name: 'Home',
+  components: {
+    BulkActionModal,
+  },
   props: {
     showDashboard: {
       type: Boolean,
@@ -455,19 +499,7 @@ export default {
     },
     createModalTrigger: {
       type: Number,
-      default: 0
-    }
-  },
-  watch: {
-    createModalTrigger(newVal) {
-      if (newVal > 0) {
-        this.openCreateModal()
-      }
-    }
-  },
-  computed: {
-    showDashboardProp() {
-      return this.showDashboard
+      default: 0,
     },
   },
   data() {
@@ -481,6 +513,9 @@ export default {
       showDeleteModal: false,
       itemToDelete: null,
       selectedItems: [],
+      showBulkActionModal: false,
+      bulkActionType: null, // 'complete' or 'delete'
+      bulkActionProcessing: false,
       searchQuery: '',
       searchTimeout: null,
       stats: {},
@@ -518,13 +553,26 @@ export default {
       yearRangeEnd: new Date().getFullYear() + 6,
       weekDays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
       months: [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
       ],
       observer: null,
     }
   },
   computed: {
+    showDashboardProp() {
+      return this.showDashboard
+    },
     hasActiveFilters() {
       return Object.values(this.filters).some(v => v !== '') || this.searchQuery !== ''
     },
@@ -561,7 +609,7 @@ export default {
           isToday: false,
           isSelected: false,
           isDisabled: true,
-          key: `prev-${day}`
+          key: `prev-${day}`,
         })
       }
 
@@ -575,7 +623,9 @@ export default {
         date.setHours(0, 0, 0, 0)
         const isToday = dateStr === todayStr
 
-        const isSelected = this.tempSelectedDate === dateStr || (!this.tempSelectedDate && this.formData.due_date === dateStr)
+        const isSelected =
+          this.tempSelectedDate === dateStr ||
+          (!this.tempSelectedDate && this.formData.due_date === dateStr)
         const isDisabled = false
 
         days.push({
@@ -585,7 +635,7 @@ export default {
           isToday: isToday,
           isSelected: isSelected,
           isDisabled: isDisabled,
-          key: `curr-${day}`
+          key: `curr-${day}`,
         })
       }
 
@@ -600,11 +650,18 @@ export default {
           isToday: false,
           isSelected: false,
           isDisabled: true,
-          key: `next-${day}`
+          key: `next-${day}`,
         })
       }
 
       return days
+    },
+  },
+  watch: {
+    createModalTrigger(newVal) {
+      if (newVal > 0) {
+        this.openCreateModal()
+      }
     },
   },
   mounted() {
@@ -624,10 +681,10 @@ export default {
       const options = {
         root: null,
         rootMargin: '100px',
-        threshold: 0.1
+        threshold: 0.1,
       }
 
-      this.observer = new IntersectionObserver((entries) => {
+      this.observer = new IntersectionObserver(entries => {
         const entry = entries[0]
         if (entry && entry.isIntersecting) {
           this.loadMore()
@@ -653,21 +710,21 @@ export default {
         // Django REST Framework pagination starts at page 1
         // Get current page and ensure it's valid
         let currentPage = this.pagination?.currentPage || 1
-        
+
         // Ensure page is valid (never 0 or negative)
         if (!currentPage || currentPage < 1 || isNaN(currentPage) || !isFinite(currentPage)) {
           console.warn('Invalid page number in fetchItems:', currentPage, '- resetting to 1')
           currentPage = 1
           this.pagination.currentPage = 1
         }
-        
+
         // Only add page parameter if it's greater than 1 (page 1 is default)
         if (currentPage > 1) {
           params.page = currentPage
         }
-        
+
         console.log('Fetching items - currentPage:', currentPage, 'params:', params)
-        
+
         console.log('Fetching page:', currentPage, 'params:', params)
         if (this.filters.category) params.category = this.filters.category
         if (this.filters.priority) params.priority = this.filters.priority
@@ -678,7 +735,7 @@ export default {
         console.log('Fetching items with params:', params)
         const response = await itemService.getAll(params)
         console.log('API Response:', response.data)
-        
+
         // Handle paginated response
         if (response.data && typeof response.data === 'object') {
           if (Array.isArray(response.data.results)) {
@@ -687,32 +744,32 @@ export default {
               this.items = response.data.results
             } else {
               // Append new items, avoiding duplicates
-              const newItems = response.data.results.filter(newItem => 
-                !this.items.some(existingItem => existingItem.id === newItem.id)
+              const newItems = response.data.results.filter(
+                newItem => !this.items.some(existingItem => existingItem.id === newItem.id)
               )
               this.items = [...this.items, ...newItems]
             }
-            
+
             const pageSize = 10 // PAGE_SIZE from Django settings
             const count = response.data.count || 0
             const nextUrl = response.data.next
             const previousUrl = response.data.previous
-            
+
             // Keep current page from state - don't recalculate from URLs
             // The current page is already set correctly when user clicks pagination
             let pageNum = this.pagination.currentPage || 1
-            
+
             // Ensure page is valid (at least 1, not NaN)
             if (pageNum < 1 || isNaN(pageNum) || !isFinite(pageNum)) {
               console.warn('Invalid page number:', pageNum, '- resetting to 1')
               pageNum = 1
             }
-            
+
             // Don't reset page based on previousUrl - trust the user's selection
             // The API response URLs are for navigation, not for determining current page
-            
+
             const totalPages = Math.ceil(count / pageSize)
-            
+
             // Update pagination state (keep current page from user action)
             this.pagination = {
               currentPage: pageNum,
@@ -729,9 +786,11 @@ export default {
               currentPage: pageNum,
               hasNext: !!nextUrl,
               hasPrevious: !!previousUrl,
-              itemsLoaded: this.items.length
+              itemsLoaded: this.items.length,
             })
-            console.log(`Loaded ${this.items.length} items from paginated response (page ${this.pagination.currentPage}/${this.pagination.totalPages})`)
+            console.log(
+              `Loaded ${this.items.length} items from paginated response (page ${this.pagination.currentPage}/${this.pagination.totalPages})`
+            )
           } else if (Array.isArray(response.data)) {
             // Non-paginated response
             this.items = response.data
@@ -771,18 +830,20 @@ export default {
       } catch (error) {
         console.error('Error fetching items:', error)
         const errorMessage = error.response?.data?.detail || error.message || 'Unknown error'
-        
+
         // More specific error messages
         if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
-          this.error = 'Cannot connect to Django server. Please make sure it is running on http://localhost:8000'
+          this.error =
+            'Cannot connect to Django server. Please make sure it is running on http://localhost:8000'
         } else if (error.response?.status === 404) {
-          this.error = 'API endpoint not found. Please check if the Django server is running and the API is accessible.'
+          this.error =
+            'API endpoint not found. Please check if the Django server is running and the API is accessible.'
         } else if (error.response?.status >= 500) {
           this.error = 'Server error. Please check the Django server logs.'
         } else {
           this.error = `Failed to fetch items: ${errorMessage}. Make sure the Django server is running on port 8000.`
         }
-        
+
         this.items = [] // Clear items on error
       } finally {
         this.loading = false
@@ -830,31 +891,56 @@ export default {
     clearSelection() {
       this.selectedItems = []
     },
-    async bulkComplete() {
-      if (!confirm(`Mark ${this.selectedItems.length} items as complete?`)) return
-      try {
-        await itemService.bulkUpdate(this.selectedItems, { completed: true })
-        this.success = `${this.selectedItems.length} items marked as complete!`
-        this.clearSelection()
-        await this.fetchItems()
-        await this.fetchStats()
-        setTimeout(() => { this.success = null }, 3000)
-      } catch (error) {
-        this.error = 'Failed to update items'
+    openBulkActionModal(actionType) {
+      if (this.selectedItems.length === 0) return
+      this.bulkActionType = actionType
+      this.showBulkActionModal = true
+    },
+    closeBulkActionModal() {
+      if (!this.bulkActionProcessing) {
+        this.showBulkActionModal = false
+        this.bulkActionType = null
       }
     },
-    async bulkDelete() {
-      if (!confirm(`Delete ${this.selectedItems.length} items?`)) return
+    async handleBulkActionConfirm() {
+      if (this.bulkActionProcessing || this.selectedItems.length === 0) return
+
+      this.bulkActionProcessing = true
+
       try {
-        await itemService.bulkDelete(this.selectedItems)
-        this.success = `${this.selectedItems.length} items deleted!`
+        if (this.bulkActionType === 'complete') {
+          await itemService.bulkUpdate(this.selectedItems, { completed: true })
+          this.success = `${this.selectedItems.length} items marked as complete!`
+        } else if (this.bulkActionType === 'delete') {
+          await itemService.bulkDelete(this.selectedItems)
+          this.success = `${this.selectedItems.length} items deleted!`
+        }
+
         this.clearSelection()
         await this.fetchItems()
         await this.fetchStats()
-        setTimeout(() => { this.success = null }, 3000)
+        this.closeBulkActionModal()
+        setTimeout(() => {
+          this.success = null
+        }, 3000)
       } catch (error) {
-        this.error = 'Failed to delete items'
+        this.error =
+          this.bulkActionType === 'complete' ? 'Failed to update items' : 'Failed to delete items'
+        this.closeBulkActionModal()
+      } finally {
+        this.bulkActionProcessing = false
       }
+    },
+    getSelectedItemsDetails() {
+      return this.selectedItems
+        .map(id => this.items.find(item => item.id === id))
+        .filter(item => item !== undefined)
+    },
+    async bulkComplete() {
+      this.openBulkActionModal('complete')
+    },
+    async bulkDelete() {
+      this.openBulkActionModal('delete')
     },
     openCreateModal() {
       this.editingItem = null
@@ -1031,7 +1117,7 @@ export default {
     },
     async confirmDelete() {
       if (!this.itemToDelete) return
-      
+
       const id = this.itemToDelete.id
       this.error = null
       try {
@@ -1122,7 +1208,17 @@ export default {
       link.click()
     },
     exportCSV() {
-      const headers = ['ID', 'Title', 'Description', 'Category', 'Priority', 'Completed', 'Due Date', 'Tags', 'Created At']
+      const headers = [
+        'ID',
+        'Title',
+        'Description',
+        'Category',
+        'Priority',
+        'Completed',
+        'Due Date',
+        'Tags',
+        'Created At',
+      ]
       const rows = this.items.map(item => [
         item.id,
         item.title,
@@ -1136,7 +1232,7 @@ export default {
       ])
       const csvContent = [
         headers.join(','),
-        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
       ].join('\n')
       const blob = new Blob([csvContent], { type: 'text/csv' })
       const url = URL.createObjectURL(blob)
@@ -1201,7 +1297,11 @@ export default {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

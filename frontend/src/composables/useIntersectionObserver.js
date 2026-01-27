@@ -7,7 +7,7 @@ export function useIntersectionObserver(callback, options = {}) {
   onMounted(() => {
     if (!window.IntersectionObserver) return
 
-    observer = new IntersectionObserver((entries) => {
+    observer = new IntersectionObserver(entries => {
       const entry = entries[0]
       if (entry && entry.isIntersecting) {
         callback()
@@ -26,6 +26,6 @@ export function useIntersectionObserver(callback, options = {}) {
   })
 
   return {
-    targetRef
+    targetRef,
   }
 }

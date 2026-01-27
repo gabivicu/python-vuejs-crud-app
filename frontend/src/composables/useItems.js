@@ -1,4 +1,4 @@
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { itemService } from '../api'
 import { usePagination } from './usePagination'
 import { isValidPaginationResponse } from '../utils/validators'
@@ -7,7 +7,7 @@ export function useItems() {
   const items = ref([])
   const loading = ref(false)
   const error = ref(null)
-  
+
   const { pagination, updatePagination, resetPagination, resetToFirstPage } = usePagination()
 
   /**
@@ -19,7 +19,7 @@ export function useItems() {
    */
   const buildQueryParams = (filters, sortBy, page) => {
     const params = {
-      ordering: sortBy
+      ordering: sortBy,
     }
 
     // Only add page if greater than 1 (page 1 is default)
@@ -52,58 +52,58 @@ export function useItems() {
     try {
       const currentPage = append ? pagination.currentPage : 1
       const params = buildQueryParams(filters, sortBy, currentPage)
-      
+
       const response = await itemService.getAll(params)
       const responseData = response.data
 
-        if (isValidPaginationResponse(responseData)) {
-          // Handle paginated response
-          if (append && currentPage > 1) {
-            // Append new items, avoiding duplicates
-            const newItems = responseData.results.filter(
-              newItem => !items.value.some(existingItem => existingItem.id === newItem.id)
-            )
-            items.value.push(...newItems)
-          } else {
-            // Replace items for first page or when not appending
-            items.value = [...responseData.results]
-          }
-
-          updatePagination(responseData)
-        } else if (Array.isArray(responseData)) {
-          // Non-paginated array response
-          items.value = [...responseData]
-          updatePagination(responseData)
+      if (isValidPaginationResponse(responseData)) {
+        // Handle paginated response
+        if (append && currentPage > 1) {
+          // Append new items, avoiding duplicates
+          const newItems = responseData.results.filter(
+            newItem => !items.value.some(existingItem => existingItem.id === newItem.id)
+          )
+          items.value.push(...newItems)
         } else {
-          throw new Error('Invalid response format')
+          // Replace items for first page or when not appending
+          items.value = [...responseData.results]
         }
-      } catch (err) {
-        error.value = handleFetchError(err)
-        items.value = []
-        resetPagination()
-      } finally {
-        loading.value = false
+
+        updatePagination(responseData)
+      } else if (Array.isArray(responseData)) {
+        // Non-paginated array response
+        items.value = [...responseData]
+        updatePagination(responseData)
+      } else {
+        throw new Error('Invalid response format')
       }
+    } catch (err) {
+      error.value = handleFetchError(err)
+      items.value = []
+      resetPagination()
+    } finally {
+      loading.value = false
     }
+  }
 
   /**
    * Handles fetch errors and returns user-friendly messages
    * @param {Error} err - Error object
    * @returns {string} - Error message
    */
-  const handleFetchError = (err) => {
+  const handleFetchError = err => {
     if (err.code === 'ECONNREFUSED' || err.message?.includes('Network Error')) {
       return 'Cannot connect to Django server. Please make sure it is running on http://localhost:8000'
     }
-    
+
     if (err.response?.status === 404) {
       return 'API endpoint not found. Please check if the Django server is running and the API is accessible.'
     }
-    
+
     if (err.response?.status >= 500) {
       return 'Server error. Please check the Django server logs.'
     }
-    
+
     return err.response?.data?.detail || err.message || 'Failed to fetch items'
   }
 
@@ -112,11 +112,11 @@ export function useItems() {
    * @param {Object} options - Fetch options
    * @returns {Promise<void>}
    */
-  const loadMore = async (options) => {
+  const loadMore = async options => {
     if (loading.value || !pagination.hasNext) {
       return
     }
-    
+
     pagination.currentPage++
     await fetchItems({ ...options, append: true })
   }
@@ -126,7 +126,7 @@ export function useItems() {
    * @param {Object} options - Fetch options
    * @returns {Promise<void>}
    */
-  const refreshItems = async (options) => {
+  const refreshItems = async options => {
     resetToFirstPage()
     await fetchItems({ ...options, append: false })
   }
@@ -136,10 +136,10 @@ export function useItems() {
    * @param {Object} item - Item object
    * @returns {Promise<void>}
    */
-  const toggleItemComplete = async (item) => {
+  const toggleItemComplete = async item => {
     try {
       await itemService.patch(item.id, {
-        completed: !item.completed
+        completed: !item.completed,
       })
       // Update local state
       const itemIndex = items.value.findIndex(i => i.id === item.id)
@@ -156,7 +156,7 @@ export function useItems() {
    * @param {number} itemId - Item ID
    * @returns {Promise<void>}
    */
-  const deleteItem = async (itemId) => {
+  const deleteItem = async itemId => {
     try {
       await itemService.delete(itemId)
       const index = items.value.findIndex(item => item.id === itemId)
@@ -171,7 +171,7 @@ export function useItems() {
   /**
    * Bulk operations
    */
-  const bulkComplete = async (itemIds) => {
+  const bulkComplete = async itemIds => {
     try {
       await itemService.bulkUpdate(itemIds, { completed: true })
       itemIds.forEach(id => {
@@ -183,7 +183,7 @@ export function useItems() {
     }
   }
 
-  const bulkDelete = async (itemIds) => {
+  const bulkDelete = async itemIds => {
     try {
       await itemService.bulkDelete(itemIds)
       itemIds.forEach(id => {
@@ -206,6 +206,6 @@ export function useItems() {
     toggleItemComplete,
     deleteItem,
     bulkComplete,
-    bulkDelete
+    bulkDelete,
   }
 }

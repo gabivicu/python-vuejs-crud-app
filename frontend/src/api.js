@@ -12,11 +12,11 @@ const api = axios.create({
 
 // Add request interceptor for debugging
 api.interceptors.request.use(
-  (config) => {
+  config => {
     console.log('API Request:', config.method?.toUpperCase(), config.url, config.params)
     return config
   },
-  (error) => {
+  error => {
     console.error('API Request Error:', error)
     return Promise.reject(error)
   }
@@ -24,11 +24,11 @@ api.interceptors.request.use(
 
 // Add response interceptor for debugging
 api.interceptors.response.use(
-  (response) => {
+  response => {
     console.log('API Response:', response.status, response.config.url)
     return response
   },
-  (error) => {
+  error => {
     console.error('API Response Error:', {
       message: error.message,
       url: error.config?.url,

@@ -8,7 +8,7 @@ export function useStats() {
     overdue: 0,
     completion_rate: 0,
     priority_stats: {},
-    category_stats: {}
+    category_stats: {},
   }
 
   const loading = { value: false }
@@ -37,6 +37,6 @@ export function useStats() {
     stats,
     loading,
     error,
-    fetchStats
+    fetchStats,
   }
 }

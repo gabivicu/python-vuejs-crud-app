@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { PAGINATION } from '../utils/constants'
-import { isValidPage, normalizePage } from '../utils/validators'
+import { normalizePage } from '../utils/validators'
 
 export function usePagination() {
   const pagination = reactive({
@@ -9,10 +9,10 @@ export function usePagination() {
     totalCount: 0,
     pageSize: PAGINATION.DEFAULT_PAGE_SIZE,
     hasNext: false,
-    hasPrevious: false
+    hasPrevious: false,
   })
 
-  const updatePagination = (response) => {
+  const updatePagination = response => {
     if (!response || typeof response !== 'object') {
       return resetPagination()
     }
@@ -30,7 +30,7 @@ export function usePagination() {
         totalPages,
         totalCount: count,
         hasNext: !!nextUrl,
-        hasPrevious: !!previousUrl
+        hasPrevious: !!previousUrl,
       })
     } else if (Array.isArray(response)) {
       // Non-paginated array response
@@ -40,7 +40,7 @@ export function usePagination() {
         totalCount: response.length,
         pageSize: response.length,
         hasNext: false,
-        hasPrevious: false
+        hasPrevious: false,
       })
     } else {
       resetPagination()
@@ -54,11 +54,11 @@ export function usePagination() {
       totalCount: 0,
       pageSize: PAGINATION.DEFAULT_PAGE_SIZE,
       hasNext: false,
-      hasPrevious: false
+      hasPrevious: false,
     })
   }
 
-  const goToPage = (page) => {
+  const goToPage = page => {
     const normalizedPage = normalizePage(page)
     if (normalizedPage >= PAGINATION.MIN_PAGE && normalizedPage <= pagination.totalPages) {
       pagination.currentPage = normalizedPage
@@ -94,6 +94,6 @@ export function usePagination() {
     goToPage,
     nextPage,
     previousPage,
-    resetToFirstPage
+    resetToFirstPage,
   }
 }

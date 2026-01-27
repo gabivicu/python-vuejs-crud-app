@@ -16,7 +16,7 @@ export function useModals() {
    * Opens edit modal with item data
    * @param {Object} item - Item to edit
    */
-  const openEditModal = (item) => {
+  const openEditModal = item => {
     editingItem.value = item
     showModal.value = true
   }
@@ -33,7 +33,7 @@ export function useModals() {
    * Opens delete confirmation modal
    * @param {Object} item - Item to delete
    */
-  const openDeleteModal = (item) => {
+  const openDeleteModal = item => {
     itemToDelete.value = item
     showDeleteModal.value = true
   }
@@ -55,6 +55,6 @@ export function useModals() {
     openEditModal,
     closeModal,
     openDeleteModal,
-    closeDeleteModal
+    closeDeleteModal,
   }
 }

@@ -6,27 +6,27 @@
         <div class="header-left">
           <HamburgerMenu />
           <h1>📝 Todo Items</h1>
-          <button @click="toggleDarkMode" class="btn btn-icon" :title="darkMode ? 'Light Mode' : 'Dark Mode'">
+          <button
+            class="btn btn-icon"
+            :title="darkMode ? 'Light Mode' : 'Dark Mode'"
+            @click="toggleDarkMode"
+          >
             {{ darkMode ? '☀️' : '🌙' }}
           </button>
         </div>
-        <div class="header-actions" v-if="$route.path === '/app'">
-          <button @click="toggleDashboard" class="btn btn-secondary">
-            📊 Dashboard
-          </button>
-          <button @click="triggerCreateModal" class="btn btn-primary">
-            + Add New Item
-          </button>
+        <div v-if="$route.path === '/app'" class="header-actions">
+          <button class="btn btn-secondary" @click="toggleDashboard">📊 Dashboard</button>
+          <button class="btn btn-primary" @click="triggerCreateModal">+ Add New Item</button>
         </div>
       </div>
     </div>
 
     <!-- Router View -->
-    <div :class="{ 'container': $route.path !== '/' }">
+    <div :class="{ container: $route.path !== '/' }">
       <router-view
-        :showDashboard="showDashboard"
-        :createModalTrigger="createModalTrigger"
-        @update:createModalTrigger="createModalTrigger = $event"
+        :show-dashboard="showDashboard"
+        :create-modal-trigger="createModalTrigger"
+        @update:create-modal-trigger="createModalTrigger = $event"
       />
     </div>
   </div>

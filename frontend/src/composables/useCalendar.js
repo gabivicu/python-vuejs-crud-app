@@ -6,11 +6,13 @@ export function useCalendar() {
   const showYearSelector = { value: false }
   const showMonthSelector = { value: false }
   const tempSelectedDate = { value: null }
-  
+
   const currentMonth = { value: new Date().getMonth() }
   const currentYear = { value: new Date().getFullYear() }
-  
-  const yearRangeStart = { value: new Date().getFullYear() - CALENDAR_CONFIG.YEAR_RANGE_START_OFFSET }
+
+  const yearRangeStart = {
+    value: new Date().getFullYear() - CALENDAR_CONFIG.YEAR_RANGE_START_OFFSET,
+  }
   const yearRangeEnd = { value: new Date().getFullYear() + CALENDAR_CONFIG.YEAR_RANGE_END_OFFSET }
 
   /**
@@ -20,7 +22,7 @@ export function useCalendar() {
   const getCurrentMonthName = () => {
     return MONTHS[currentMonth.value]
   }
-  
+
   // Expose MONTHS and WEEK_DAYS for template use
   const MONTHS_EXPORTED = MONTHS
   const WEEK_DAYS_EXPORTED = WEEK_DAYS
@@ -42,7 +44,7 @@ export function useCalendar() {
    * @param {string} selectedDate - Currently selected date (YYYY-MM-DD)
    * @returns {Array} - Array of day objects
    */
-  const getCalendarDays = (selectedDate) => {
+  const getCalendarDays = selectedDate => {
     const days = []
     const firstDay = new Date(currentYear.value, currentMonth.value, 1)
     const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0)
@@ -67,18 +69,16 @@ export function useCalendar() {
         isToday: false,
         isSelected: false,
         isDisabled: true,
-        key: `prev-${day}`
+        key: `prev-${day}`,
       })
     }
 
     // Current month days
     for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = formatDateForInput(
-        new Date(currentYear.value, currentMonth.value, day)
-      )
+      const dateStr = formatDateForInput(new Date(currentYear.value, currentMonth.value, day))
       const isToday = dateStr === todayStr
-      const isSelected = tempSelectedDate.value === dateStr || 
-                        (!tempSelectedDate.value && selectedDate === dateStr)
+      const isSelected =
+        tempSelectedDate.value === dateStr || (!tempSelectedDate.value && selectedDate === dateStr)
 
       days.push({
         day,
@@ -87,16 +87,14 @@ export function useCalendar() {
         isToday,
         isSelected,
         isDisabled: false,
-        key: `curr-${day}`
+        key: `curr-${day}`,
       })
     }
 
     // Next month days (to fill the grid)
     const remainingDays = CALENDAR_CONFIG.CALENDAR_GRID_SIZE - days.length
     for (let day = 1; day <= remainingDays; day++) {
-      const dateStr = formatDateForInput(
-        new Date(currentYear.value, currentMonth.value + 1, day)
-      )
+      const dateStr = formatDateForInput(new Date(currentYear.value, currentMonth.value + 1, day))
       days.push({
         day,
         date: dateStr,
@@ -104,7 +102,7 @@ export function useCalendar() {
         isToday: false,
         isSelected: false,
         isDisabled: true,
-        key: `next-${day}`
+        key: `next-${day}`,
       })
     }
 
@@ -143,10 +141,10 @@ export function useCalendar() {
    * Selects a year
    * @param {number} year - Year to select
    */
-  const selectYear = (year) => {
+  const selectYear = year => {
     currentYear.value = year
     showYearSelector.value = false
-    
+
     // Adjust range if needed
     if (year < yearRangeStart.value) {
       const diff = yearRangeStart.value - year
@@ -163,7 +161,7 @@ export function useCalendar() {
    * Selects a month
    * @param {number} monthIndex - Month index (0-11)
    */
-  const selectMonth = (monthIndex) => {
+  const selectMonth = monthIndex => {
     currentMonth.value = monthIndex
     showMonthSelector.value = false
   }
@@ -190,7 +188,7 @@ export function useCalendar() {
    * Selects a date
    * @param {Object} day - Day object
    */
-  const selectDate = (day) => {
+  const selectDate = day => {
     if (day.isDisabled || day.otherMonth) return
     tempSelectedDate.value = day.date
   }
@@ -226,6 +224,6 @@ export function useCalendar() {
     previousYearRange,
     nextYearRange,
     selectDate,
-    resetToCurrentDate
+    resetToCurrentDate,
   }
 }

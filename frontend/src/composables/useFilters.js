@@ -1,4 +1,4 @@
-import { SORT_OPTIONS, ITEM_CATEGORIES, ITEM_PRIORITIES, DATE_FILTERS } from '../utils/constants'
+import { SORT_OPTIONS } from '../utils/constants'
 import { useDebounce } from './useDebounce'
 
 export function useFilters() {
@@ -7,7 +7,7 @@ export function useFilters() {
     priority: '',
     completed: '',
     due_filter: '',
-    search: ''
+    search: '',
   }
 
   const sortBy = { value: SORT_OPTIONS.NEWEST_FIRST }
@@ -17,10 +17,7 @@ export function useFilters() {
    * @returns {boolean} - True if any filter is active
    */
   const hasActiveFilters = () => {
-    return (
-      Object.values(filters).some(v => v !== '') ||
-      sortBy.value !== SORT_OPTIONS.NEWEST_FIRST
-    )
+    return Object.values(filters).some(v => v !== '') || sortBy.value !== SORT_OPTIONS.NEWEST_FIRST
   }
 
   /**
@@ -54,7 +51,7 @@ export function useFilters() {
       priority: filters.priority || undefined,
       completed: filters.completed || undefined,
       due_filter: filters.due_filter || undefined,
-      search: filters.search || undefined
+      search: filters.search || undefined,
     }
   }
 
@@ -64,6 +61,6 @@ export function useFilters() {
     hasActiveFilters,
     resetFilters,
     getDebouncedSearch,
-    getFilterParams
+    getFilterParams,
   }
 }

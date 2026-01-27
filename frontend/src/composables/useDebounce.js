@@ -9,7 +9,7 @@ export function useDebounce(value, delay = 300) {
 
   let timeoutId = null
 
-  watch(value, (newValue) => {
+  watch(value, newValue => {
     if (timeoutId) {
       clearTimeout(timeoutId)
     }
