@@ -1,10 +1,10 @@
 <template>
   <div class="hamburger-menu">
     <button
-      @click="toggleMenu"
       class="hamburger-btn"
       :class="{ active: isOpen }"
       aria-label="Toggle menu"
+      @click="toggleMenu"
     >
       <span></span>
       <span></span>
@@ -14,16 +14,16 @@
     <div :class="['sidebar', { open: isOpen }]" @click.stop>
       <div class="sidebar-header">
         <h2>📝 Menu</h2>
-        <button @click="toggleMenu" class="close-sidebar-btn">&times;</button>
+        <button class="close-sidebar-btn" @click="toggleMenu">&times;</button>
       </div>
       <nav class="sidebar-nav">
         <router-link
           v-for="item in menuItems"
           :key="item.path"
           :to="item.path"
-          @click="closeMenu"
           class="nav-item"
           :class="{ active: $route.path === item.path }"
+          @click="closeMenu"
         >
           <span class="nav-icon">{{ item.icon }}</span>
           <span class="nav-label">{{ item.label }}</span>
@@ -31,11 +31,7 @@
       </nav>
     </div>
 
-    <div
-      v-if="isOpen"
-      class="sidebar-overlay"
-      @click="closeMenu"
-    ></div>
+    <div v-if="isOpen" class="sidebar-overlay" @click="closeMenu"></div>
   </div>
 </template>
 
@@ -59,6 +55,9 @@ export default {
       this.closeMenu()
     },
   },
+  beforeUnmount() {
+    document.body.style.overflow = ''
+  },
   methods: {
     toggleMenu() {
       this.isOpen = !this.isOpen
@@ -72,9 +71,6 @@ export default {
       this.isOpen = false
       document.body.style.overflow = ''
     },
-  },
-  beforeUnmount() {
-    document.body.style.overflow = ''
   },
 }
 </script>

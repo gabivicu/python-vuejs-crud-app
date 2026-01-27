@@ -123,3 +123,154 @@ class TestItemViewSet:
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Item.objects.filter(pk=item.pk).exists()
+
+    def test_partial_update_item(self, client, sample_items):
+        """Test partial update (PATCH) of an item."""
+        item = sample_items[0]
+        url = reverse("item-detail", kwargs={"pk": item.pk})
+        data = {"title": "Patched Title"}
+        response = client.patch(url, data, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["title"] == "Patched Title"
+        item.refresh_from_db()
+        assert item.title == "Patched Title"
+
+    def test_filter_by_completed(self, client, sample_items):
+        """Test filtering by completion status."""
+        url = reverse("item-list")
+        response = client.get(url, {"completed": "true"})
+
+        assert response.status_code == status.HTTP_200_OK
+        items = response.data.get("results", response.data)
+        assert all(item["completed"] is True for item in items)
+
+        response = client.get(url, {"completed": "false"})
+        assert response.status_code == status.HTTP_200_OK
+        items = response.data.get("results", response.data)
+        assert all(item["completed"] is False for item in items)
+
+    def test_filter_by_due_overdue(self, client):
+        """Test filtering by overdue items."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        Item.objects.create(
+            title="Overdue",
+            due_date=timezone.now() - timedelta(days=1),
+            completed=False,
+        )
+        Item.objects.create(
+            title="Future",
+            due_date=timezone.now() + timedelta(days=1),
+            completed=False,
+        )
+
+        url = reverse("item-list")
+        response = client.get(url, {"due_filter": "overdue"})
+
+        assert response.status_code == status.HTTP_200_OK
+        items = response.data.get("results", response.data)
+        assert len(items) == 1
+        assert items[0]["title"] == "Overdue"
+
+    def test_filter_by_due_today(self, client):
+        """Test filtering by items due today."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        today = timezone.now()
+        Item.objects.create(
+            title="Due Today",
+            due_date=today,
+            completed=False,
+        )
+        Item.objects.create(
+            title="Due Tomorrow",
+            due_date=today + timedelta(days=1),
+            completed=False,
+        )
+
+        url = reverse("item-list")
+        response = client.get(url, {"due_filter": "today"})
+
+        assert response.status_code == status.HTTP_200_OK
+        items = response.data.get("results", response.data)
+        assert len(items) == 1
+        assert items[0]["title"] == "Due Today"
+
+    def test_ordering(self, client, sample_items):
+        """Test ordering of items."""
+        url = reverse("item-list")
+        response = client.get(url, {"ordering": "title"})
+
+        assert response.status_code == status.HTTP_200_OK
+        items = response.data.get("results", response.data)
+        titles = [item["title"] for item in items]
+        assert titles == sorted(titles)
+
+        response = client.get(url, {"ordering": "-title"})
+        assert response.status_code == status.HTTP_200_OK
+        items = response.data.get("results", response.data)
+        titles = [item["title"] for item in items]
+        assert titles == sorted(titles, reverse=True)
+
+    def test_high_priority_pending_endpoint(self, client):
+        """Test high_priority_pending endpoint."""
+        Item.objects.create(title="High", priority="high", completed=False)
+        Item.objects.create(title="Urgent", priority="urgent", completed=False)
+        Item.objects.create(title="Low", priority="low", completed=False)
+        Item.objects.create(title="High Completed", priority="high", completed=True)
+
+        url = reverse("item-high-priority-pending")
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        items = response.data
+        assert len(items) == 2
+        priorities = [item["priority"] for item in items]
+        assert "high" in priorities
+        assert "urgent" in priorities
+
+    def test_retrieve_item(self, client, sample_items):
+        """Test retrieving a single item."""
+        item = sample_items[0]
+        url = reverse("item-detail", kwargs={"pk": item.pk})
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == item.pk
+        assert response.data["title"] == item.title
+
+    def test_retrieve_nonexistent_item(self, client):
+        """Test retrieving a non-existent item."""
+        url = reverse("item-detail", kwargs={"pk": 99999})
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_create_item_with_all_fields(self, client):
+        """Test creating item with all optional fields."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        url = reverse("item-list")
+        data = {
+            "title": "Complete Item",
+            "description": "Full description",
+            "category": "health",
+            "priority": "urgent",
+            "completed": True,
+            "due_date": (timezone.now() + timedelta(days=7)).isoformat(),
+            "tags": "important, urgent",
+        }
+        response = client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["title"] == "Complete Item"
+        assert response.data["category"] == "health"
+        assert response.data["priority"] == "urgent"
+        assert response.data["completed"] is True

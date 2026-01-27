@@ -138,7 +138,8 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         response["X-Frame-Options"] = "DENY"
         response["X-XSS-Protection"] = "1; mode=block"
 
-        # Add CORS headers for API requests (if not already handled by django-cors-headers)
+        # Add CORS headers for API requests
+        # (if not already handled by django-cors-headers)
         if request.path.startswith("/api/"):
             response["Access-Control-Allow-Origin"] = "*"
             response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"

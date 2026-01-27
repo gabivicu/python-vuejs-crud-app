@@ -8,7 +8,7 @@
       <section class="about-section">
         <h2>📝 Todo Items Manager</h2>
         <p>
-            This app is a complete task and item management system built with modern web technologies.
+          This app is a complete task and item management system built with modern web technologies.
         </p>
       </section>
 

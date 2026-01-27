@@ -1,12 +1,23 @@
 [flake8]
-max-line-length = 100
-extend-ignore = E203, E266, E501, W503
+max-line-length = 88
+extend-ignore = E203, W503, E501, D100, D101, D102, D103, D104, D105, D106, D107, D200, D202, D205, D401
 exclude =
     .git,
     __pycache__,
     venv,
-    env,
     .venv,
+    env,
+    .env,
     migrations,
     node_modules,
-    frontend
+    frontend,
+    staticfiles,
+    media
+per-file-ignores =
+    __init__.py:F401,D104
+    */migrations/*:D100,D101
+    generate_items.py:E402,F401,F841,D202,D205
+    api/*:D100,D101,D103,D104,D105,D106,D107,D200,D205,D401
+    crudapp/*:D100,D104,D200,D205,D401
+    api/tests/*:D205,D401
+max-complexity = 12

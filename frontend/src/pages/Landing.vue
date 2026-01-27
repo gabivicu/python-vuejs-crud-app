@@ -12,12 +12,8 @@
         <p class="hero-subtitle">{{ currentMessage.subtitle }}</p>
 
         <div class="cta-buttons">
-          <button @click="goToApp" class="btn-cta btn-primary-cta">
-            Get Started
-          </button>
-          <button @click="scrollToFeatures" class="btn-cta btn-secondary-cta">
-            Learn More
-          </button>
+          <button class="btn-cta btn-primary-cta" @click="goToApp">Get Started</button>
+          <button class="btn-cta btn-secondary-cta" @click="scrollToFeatures">Learn More</button>
         </div>
 
         <div class="message-indicator">
@@ -31,7 +27,7 @@
       </div>
     </div>
 
-    <div class="features-section" ref="featuresSection">
+    <div ref="featuresSection" class="features-section">
       <h2 class="section-title">Why Choose Our Todo App?</h2>
 
       <div class="features-grid">
@@ -61,7 +57,7 @@
     <div class="final-cta">
       <h2>Ready to boost your productivity?</h2>
       <p>Start organizing your tasks today and achieve your goals</p>
-      <button @click="goToApp" class="btn-cta btn-primary-cta btn-large">
+      <button class="btn-cta btn-primary-cta btn-large" @click="goToApp">
         Start Now - It's Free
       </button>
     </div>
@@ -78,73 +74,73 @@ export default {
         {
           title: 'Transform Your Day',
           subtitle: 'Turn your goals into achievements with smart task management',
-          emoji: '🚀'
+          emoji: '🚀',
         },
         {
           title: 'Stay Organized',
           subtitle: 'Keep track of what matters most and never miss a deadline',
-          emoji: '📋'
+          emoji: '📋',
         },
         {
           title: 'Achieve More',
           subtitle: 'Boost your productivity and accomplish your dreams',
-          emoji: '✨'
+          emoji: '✨',
         },
         {
           title: 'Work Smarter',
           subtitle: 'Prioritize tasks and focus on what truly drives success',
-          emoji: '💡'
+          emoji: '💡',
         },
         {
           title: 'Stay Focused',
           subtitle: 'Eliminate distractions and concentrate on your priorities',
-          emoji: '🎯'
-        }
+          emoji: '🎯',
+        },
       ],
       features: [
         {
           icon: '⚡',
           title: 'Lightning Fast',
-          description: 'Built with modern technologies for instant performance'
+          description: 'Built with modern technologies for instant performance',
         },
         {
           icon: '🎨',
           title: 'Beautiful Design',
-          description: 'Clean, intuitive interface that makes task management enjoyable'
+          description: 'Clean, intuitive interface that makes task management enjoyable',
         },
         {
           icon: '🔒',
           title: 'Secure & Reliable',
-          description: 'Your data is safe with enterprise-grade security'
+          description: 'Your data is safe with enterprise-grade security',
         },
         {
           icon: '📱',
           title: 'Responsive',
-          description: 'Works perfectly on desktop, tablet, and mobile devices'
+          description: 'Works perfectly on desktop, tablet, and mobile devices',
         },
         {
           icon: '🌙',
           title: 'Dark Mode',
-          description: 'Easy on the eyes with automatic theme switching'
+          description: 'Easy on the eyes with automatic theme switching',
         },
         {
           icon: '📊',
           title: 'Analytics',
-          description: 'Track your progress with detailed statistics and charts'
-        }
+          description: 'Track your progress with detailed statistics and charts',
+        },
       ],
       animatedStats: {
         tasks: 0,
         users: 0,
-        productivity: 0
+        productivity: 0,
       },
       targetStats: {
         tasks: 10000,
         users: 500,
-        productivity: 95
+        productivity: 95,
       },
       messageInterval: null,
-      statsInterval: null
+      statsInterval: null,
     }
   },
   computed: {
@@ -153,7 +149,7 @@ export default {
     },
     currentEmoji() {
       return this.currentMessage.emoji
-    }
+    },
   },
   mounted() {
     this.startMessageRotation()
@@ -206,8 +202,8 @@ export default {
     },
     scrollToFeatures() {
       this.$refs.featuresSection.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -270,7 +266,8 @@ export default {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
   }
@@ -446,7 +443,8 @@ export default {
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

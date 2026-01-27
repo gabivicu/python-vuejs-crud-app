@@ -39,7 +39,29 @@ services:
       - crudapp-network
     restart: unless-stopped
 
-  # Vue.js frontend
+  # Vue.js frontend - Development (Vite Dev Server with Hot Reload)
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: crudapp-frontend-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules  # Anonymous volume pentru node_modules (prevents overwrite)
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - DOCKER=true  # Indicate Docker environment for vite.config.js
+      - CHOKIDAR_USEPOLLING=true  # Force polling for file watching
+    depends_on:
+      - backend
+    networks:
+      - crudapp-network
+    restart: unless-stopped
+    # Use this for development - enables hot reload
+
+  # Vue.js frontend - Production (Nginx Static Build)
   frontend:
     build:
       context: ./frontend
@@ -52,6 +74,7 @@ services:
     networks:
       - crudapp-network
     restart: unless-stopped
+    # Use this for production - static build
 
 volumes:
   redis-data:

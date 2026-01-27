@@ -1,32 +1,90 @@
 # Pre-commit hooks configuration
-# Demonstrates code quality automation
+# See https://pre-commit.com for more information
 
 repos:
+  # Python hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
       - id: trailing-whitespace
+        exclude: ^frontend/
       - id: end-of-file-fixer
+        exclude: ^frontend/
       - id: check-yaml
       - id: check-added-large-files
+        args: ['--maxkb=1000']
       - id: check-json
+      - id: check-toml
       - id: check-merge-conflict
       - id: debug-statements
 
+  # Python code formatting with Black
   - repo: https://github.com/psf/black
     rev: 23.12.1
     hooks:
       - id: black
-        language_version: python3.11
+        language_version: python3
+        exclude: ^frontend/
+        args: ['--line-length=88']
 
+  # Python import sorting with isort
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
-        args: ["--profile", "black"]
+        exclude: ^frontend/
+        args: ['--profile', 'black', '--line-length=88']
 
+  # Python linting with flake8
   - repo: https://github.com/pycqa/flake8
     rev: 6.1.0
     hooks:
       - id: flake8
-        args: ['--max-line-length=100', '--extend-ignore=E203']
+        exclude: ^frontend/
+        args: ['--max-line-length=88', '--extend-ignore=E203,W503,D104']
+        additional_dependencies: [flake8-docstrings]
+
+  # Frontend: ESLint & Prettier (via npm scripts - more reliable)
+  - repo: local
+    hooks:
+      - id: prettier-frontend
+        name: Prettier Frontend
+        entry: bash -c 'cd frontend && npm run format'
+        language: system
+        files: ^frontend/.*\.(js|vue|ts|tsx|json|css|scss|md)$
+        pass_filenames: false
+        always_run: false
+
+      - id: eslint-frontend
+        name: ESLint Frontend
+        entry: bash -c 'cd frontend && npm run lint'
+        language: system
+        files: ^frontend/.*\.(js|vue|ts|tsx)$
+        pass_filenames: false
+        always_run: false
+
+  # Backend: Unit Tests (pytest)
+  - repo: local
+    hooks:
+      - id: pytest-backend
+        name: Backend Unit Tests
+        entry: bash -c 'python -m pytest api/tests/ -v --tb=short'
+        language: system
+        files: ^(api/|crudapp/|manage\.py|pytest\.ini|requirements\.txt|\.pre-commit-config\.yaml)
+        pass_filenames: false
+        always_run: false
+        stages: [commit]
+        verbose: true
+
+  # Frontend: Unit Tests (vitest)
+  - repo: local
+    hooks:
+      - id: vitest-frontend
+        name: Frontend Unit Tests
+        entry: bash -c 'cd frontend && npm test -- --run'
+        language: system
+        files: ^frontend/.*\.(js|vue|ts|tsx|json)$
+        pass_filenames: false
+        always_run: false
+        stages: [commit]
+        verbose: true

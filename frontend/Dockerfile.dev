@@ -1,0 +1,26 @@
+# Dockerfile for Vue.js frontend development
+# Runs Vite dev server with hot-reload support
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy vite config (needed for initial setup)
+COPY vite.config.js ./
+
+# Expose Vite dev server port
+EXPOSE 5173
+
+# Set environment variable to indicate Docker environment
+ENV DOCKER=true
+
+# Start Vite dev server
+# --host 0.0.0.0 allows connections from outside container
+# Note: Source code is mounted via volume, so changes are detected via polling
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

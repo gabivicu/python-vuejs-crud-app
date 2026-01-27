@@ -211,7 +211,9 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="Get high priority pending items",
-        description="Returns items with high or urgent priority that are not completed.",
+        description=(
+            "Returns items with high or urgent priority " "that are not completed."
+        ),
     )
     @action(detail=False, methods=["get"])
     def high_priority_pending(self, request):

@@ -31,13 +31,9 @@ export const useItemsStore = defineStore('items', () => {
   })
 
   // Getters (computed)
-  const completedItems = computed(() =>
-    items.value.filter(item => item.completed)
-  )
+  const completedItems = computed(() => items.value.filter(item => item.completed))
 
-  const pendingItems = computed(() =>
-    items.value.filter(item => !item.completed)
-  )
+  const pendingItems = computed(() => items.value.filter(item => !item.completed))
 
   const overdueItems = computed(() =>
     items.value.filter(item => {
@@ -61,10 +57,11 @@ export const useItemsStore = defineStore('items', () => {
     }
     if (filters.value.search) {
       const searchLower = filters.value.search.toLowerCase()
-      filtered = filtered.filter(item =>
-        item.title.toLowerCase().includes(searchLower) ||
-        item.description.toLowerCase().includes(searchLower) ||
-        (item.tags && item.tags.toLowerCase().includes(searchLower))
+      filtered = filtered.filter(
+        item =>
+          item.title.toLowerCase().includes(searchLower) ||
+          item.description.toLowerCase().includes(searchLower) ||
+          (item.tags && item.tags.toLowerCase().includes(searchLower))
       )
     }
 
@@ -82,9 +79,7 @@ export const useItemsStore = defineStore('items', () => {
     try {
       const params = {
         ordering: sortBy.value,
-        ...Object.fromEntries(
-          Object.entries(filters.value).filter(([_, v]) => v !== '')
-        ),
+        ...Object.fromEntries(Object.entries(filters.value).filter(([, v]) => v !== '')),
       }
       const response = await itemService.getAll(params)
       items.value = response.data.results || response.data
