@@ -61,6 +61,11 @@ export const itemService = {
     return api.put(`/items/${id}/`, data)
   },
 
+  // Partial update an existing item
+  patch(id, data) {
+    return api.patch(`/items/${id}/`, data)
+  },
+
   // Delete an item
   delete(id) {
     return api.delete(`/items/${id}/`)
@@ -71,9 +76,9 @@ export const itemService = {
     return Promise.all(ids.map(id => api.delete(`/items/${id}/`)))
   },
 
-  // Bulk update
+  // Bulk update (uses PATCH for partial updates)
   bulkUpdate(ids, data) {
-    return Promise.all(ids.map(id => api.put(`/items/${id}/`, data)))
+    return Promise.all(ids.map(id => api.patch(`/items/${id}/`, data)))
   },
 
   // Get statistics

@@ -190,10 +190,87 @@
             <button @click="openEditModal(item)" class="btn btn-small btn-secondary">
               Edit
             </button>
-            <button @click="deleteItem(item.id)" class="btn btn-small btn-danger">
+            <button @click="openDeleteModal(item)" class="btn btn-small btn-danger">
               Delete
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infinite Scroll Sentinel -->
+    <div ref="loadMoreTrigger" class="infinite-scroll-trigger">
+      <div v-if="loading && pagination.currentPage > 1" class="loading-more">
+        <span class="spinner"></span> Loading more items...
+      </div>
+      <div v-else-if="!pagination.hasNext && items.length > 0" class="end-of-list">
+        No more items to load
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div :class="['modal', { active: showDeleteModal }]" @click.self="closeDeleteModal">
+      <div class="modal-content delete-modal">
+        <div class="modal-header">
+          <h2>⚠️ Confirm Delete</h2>
+          <button @click="closeDeleteModal" class="close-btn">&times;</button>
+        </div>
+        <div class="delete-modal-content" v-if="itemToDelete">
+          <div class="delete-warning">
+            <p class="warning-text">Are you sure you want to delete this item? This action cannot be undone.</p>
+          </div>
+          <div class="item-details">
+            <div class="detail-row">
+              <span class="detail-label">Title:</span>
+              <span class="detail-value">{{ itemToDelete.title }}</span>
+            </div>
+            <div class="detail-row" v-if="itemToDelete.description">
+              <span class="detail-label">Description:</span>
+              <span class="detail-value">{{ itemToDelete.description }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Category:</span>
+              <span :class="['badge', `badge-category-${itemToDelete.category || 'other'}`]">
+                {{ getCategoryLabel(itemToDelete.category) }}
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Priority:</span>
+              <span :class="['badge', `badge-${itemToDelete.priority || 'medium'}`]">
+                {{ getPriorityLabel(itemToDelete.priority) }}
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Status:</span>
+              <span :class="['badge', itemToDelete.completed ? 'badge-completed' : 'badge-pending']">
+                {{ itemToDelete.completed ? 'Completed' : 'Pending' }}
+              </span>
+            </div>
+            <div class="detail-row" v-if="itemToDelete.due_date">
+              <span class="detail-label">Due Date:</span>
+              <span class="detail-value" :class="{ 'overdue': isOverdue(itemToDelete) }">
+                {{ formatDate(itemToDelete.due_date) }}
+              </span>
+            </div>
+            <div class="detail-row" v-if="itemToDelete.tags_list && itemToDelete.tags_list.length > 0">
+              <span class="detail-label">Tags:</span>
+              <div class="tags-list">
+                <span v-for="tag in itemToDelete.tags_list" :key="tag" class="tag">{{ tag }}</span>
+              </div>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Created:</span>
+              <span class="detail-value">{{ formatDate(itemToDelete.created_at) }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions delete-actions">
+          <button @click="closeDeleteModal" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button @click="confirmDelete" class="btn btn-danger">
+            Delete Item
+          </button>
         </div>
       </div>
     </div>
@@ -401,10 +478,20 @@ export default {
       success: null,
       showModal: false,
       editingItem: null,
+      showDeleteModal: false,
+      itemToDelete: null,
       selectedItems: [],
       searchQuery: '',
       searchTimeout: null,
       stats: {},
+      pagination: {
+        currentPage: 1,
+        totalPages: 1,
+        totalCount: 0,
+        pageSize: 10,
+        hasNext: false,
+        hasPrevious: false,
+      },
       filters: {
         category: '',
         priority: '',
@@ -434,6 +521,7 @@ export default {
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
       ],
+      observer: null,
     }
   },
   computed: {
@@ -523,11 +611,38 @@ export default {
     this.fetchItems()
     this.fetchStats()
     document.addEventListener('click', this.handleClickOutside)
+    this.setupIntersectionObserver()
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
+    if (this.observer) {
+      this.observer.disconnect()
+    }
   },
   methods: {
+    setupIntersectionObserver() {
+      const options = {
+        root: null,
+        rootMargin: '100px',
+        threshold: 0.1
+      }
+
+      this.observer = new IntersectionObserver((entries) => {
+        const entry = entries[0]
+        if (entry && entry.isIntersecting) {
+          this.loadMore()
+        }
+      }, options)
+
+      if (this.$refs.loadMoreTrigger) {
+        this.observer.observe(this.$refs.loadMoreTrigger)
+      }
+    },
+    loadMore() {
+      if (this.loading || !this.pagination.hasNext) return
+      this.pagination.currentPage++
+      this.fetchItems()
+    },
     async fetchItems() {
       this.loading = true
       this.error = null
@@ -535,23 +650,140 @@ export default {
         const params = {
           ordering: this.sortBy,
         }
+        // Django REST Framework pagination starts at page 1
+        // Get current page and ensure it's valid
+        let currentPage = this.pagination?.currentPage || 1
+        
+        // Ensure page is valid (never 0 or negative)
+        if (!currentPage || currentPage < 1 || isNaN(currentPage) || !isFinite(currentPage)) {
+          console.warn('Invalid page number in fetchItems:', currentPage, '- resetting to 1')
+          currentPage = 1
+          this.pagination.currentPage = 1
+        }
+        
+        // Only add page parameter if it's greater than 1 (page 1 is default)
+        if (currentPage > 1) {
+          params.page = currentPage
+        }
+        
+        console.log('Fetching items - currentPage:', currentPage, 'params:', params)
+        
+        console.log('Fetching page:', currentPage, 'params:', params)
         if (this.filters.category) params.category = this.filters.category
         if (this.filters.priority) params.priority = this.filters.priority
         if (this.filters.completed) params.completed = this.filters.completed
         if (this.filters.due_filter) params.due_filter = this.filters.due_filter
         if (this.searchQuery) params.search = this.searchQuery
 
+        console.log('Fetching items with params:', params)
         const response = await itemService.getAll(params)
-        this.items = response.data.results || response.data
+        console.log('API Response:', response.data)
+        
+        // Handle paginated response
+        if (response.data && typeof response.data === 'object') {
+          if (Array.isArray(response.data.results)) {
+            // Paginated response (Django REST Framework format)
+            if (currentPage === 1) {
+              this.items = response.data.results
+            } else {
+              // Append new items, avoiding duplicates
+              const newItems = response.data.results.filter(newItem => 
+                !this.items.some(existingItem => existingItem.id === newItem.id)
+              )
+              this.items = [...this.items, ...newItems]
+            }
+            
+            const pageSize = 10 // PAGE_SIZE from Django settings
+            const count = response.data.count || 0
+            const nextUrl = response.data.next
+            const previousUrl = response.data.previous
+            
+            // Keep current page from state - don't recalculate from URLs
+            // The current page is already set correctly when user clicks pagination
+            let pageNum = this.pagination.currentPage || 1
+            
+            // Ensure page is valid (at least 1, not NaN)
+            if (pageNum < 1 || isNaN(pageNum) || !isFinite(pageNum)) {
+              console.warn('Invalid page number:', pageNum, '- resetting to 1')
+              pageNum = 1
+            }
+            
+            // Don't reset page based on previousUrl - trust the user's selection
+            // The API response URLs are for navigation, not for determining current page
+            
+            const totalPages = Math.ceil(count / pageSize)
+            
+            // Update pagination state (keep current page from user action)
+            this.pagination = {
+              currentPage: pageNum,
+              totalPages: totalPages,
+              totalCount: count,
+              pageSize: pageSize,
+              hasNext: !!nextUrl,
+              hasPrevious: !!previousUrl,
+            }
+            console.log('Pagination info:', {
+              count,
+              pageSize,
+              totalPages,
+              currentPage: pageNum,
+              hasNext: !!nextUrl,
+              hasPrevious: !!previousUrl,
+              itemsLoaded: this.items.length
+            })
+            console.log(`Loaded ${this.items.length} items from paginated response (page ${this.pagination.currentPage}/${this.pagination.totalPages})`)
+          } else if (Array.isArray(response.data)) {
+            // Non-paginated response
+            this.items = response.data
+            this.pagination = {
+              currentPage: 1,
+              totalPages: 1,
+              totalCount: response.data.length,
+              pageSize: response.data.length,
+              hasNext: false,
+              hasPrevious: false,
+            }
+            console.log(`Loaded ${this.items.length} items from array response`)
+          } else {
+            this.items = []
+            this.pagination = {
+              currentPage: 1,
+              totalPages: 1,
+              totalCount: 0,
+              pageSize: 10,
+              hasNext: false,
+              hasPrevious: false,
+            }
+            console.warn('Unexpected response format:', response.data)
+          }
+        } else {
+          this.items = []
+          this.pagination = {
+            currentPage: 1,
+            totalPages: 1,
+            totalCount: 0,
+            pageSize: 10,
+            hasNext: false,
+            hasPrevious: false,
+          }
+          console.warn('Invalid response data:', response.data)
+        }
       } catch (error) {
+        console.error('Error fetching items:', error)
         const errorMessage = error.response?.data?.detail || error.message || 'Unknown error'
-        this.error = `Failed to fetch items: ${errorMessage}. Make sure the Django server is running on port 8000.`
-        console.error('Error fetching items:', {
-          message: error.message,
-          code: error.code,
-          response: error.response?.data,
-          config: error.config,
-        })
+        
+        // More specific error messages
+        if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+          this.error = 'Cannot connect to Django server. Please make sure it is running on http://localhost:8000'
+        } else if (error.response?.status === 404) {
+          this.error = 'API endpoint not found. Please check if the Django server is running and the API is accessible.'
+        } else if (error.response?.status >= 500) {
+          this.error = 'Server error. Please check the Django server logs.'
+        } else {
+          this.error = `Failed to fetch items: ${errorMessage}. Make sure the Django server is running on port 8000.`
+        }
+        
+        this.items = [] // Clear items on error
       } finally {
         this.loading = false
       }
@@ -571,6 +803,7 @@ export default {
       }, 300)
     },
     applyFilters() {
+      this.pagination.currentPage = 1
       this.fetchItems()
       this.fetchStats()
     },
@@ -583,6 +816,7 @@ export default {
       }
       this.searchQuery = ''
       this.sortBy = '-created_at'
+      this.pagination.currentPage = 1
       this.applyFilters()
     },
     toggleSelection(itemId) {
@@ -782,29 +1016,50 @@ export default {
         console.error('Error saving item:', error)
       }
     },
-    async deleteItem(id) {
-      if (!confirm('Are you sure you want to delete this item?')) {
-        return
+    openDeleteModal(item) {
+      // Find the full item object from items array
+      const fullItem = this.items.find(i => i.id === item.id || i.id === item)
+      if (fullItem) {
+        this.itemToDelete = fullItem
+        this.showDeleteModal = true
+        this.error = null
       }
+    },
+    closeDeleteModal() {
+      this.showDeleteModal = false
+      this.itemToDelete = null
+    },
+    async confirmDelete() {
+      if (!this.itemToDelete) return
+      
+      const id = this.itemToDelete.id
       this.error = null
       try {
         await itemService.delete(id)
         this.success = 'Item deleted successfully!'
+        this.closeDeleteModal()
         await this.fetchItems()
         await this.fetchStats()
         setTimeout(() => {
           this.success = null
         }, 3000)
       } catch (error) {
-        this.error = 'Failed to delete item'
+        this.error = error.response?.data?.detail || 'Failed to delete item'
         console.error('Error deleting item:', error)
+      }
+    },
+    async deleteItem(id) {
+      // Keep this method for backward compatibility, but use modal instead
+      const item = this.items.find(i => i.id === id)
+      if (item) {
+        this.openDeleteModal(item)
       }
     },
     async toggleComplete(item) {
       this.error = null
       try {
-        await itemService.update(item.id, {
-          ...item,
+        // Use PATCH for partial update (only send the field that changes)
+        await itemService.patch(item.id, {
           completed: !item.completed,
         })
         await this.fetchItems()
@@ -910,5 +1165,43 @@ export default {
 <style scoped>
 .page-content {
   width: 100%;
+}
+
+.infinite-scroll-trigger {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.loading-more {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.end-of-list {
+  color: #999;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
