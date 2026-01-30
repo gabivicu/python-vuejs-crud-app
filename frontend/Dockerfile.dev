@@ -26,4 +26,5 @@ ENV DOCKER=true
 # Start Vite dev server
 # --host 0.0.0.0 allows connections from outside container
 # Note: Source code is mounted via volume, so changes are detected via polling
+# Watch mode is enabled by default in Vite dev mode
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

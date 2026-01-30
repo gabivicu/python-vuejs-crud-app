@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen bg-background', { dark: darkMode }]">
+  <div class="min-h-screen bg-background text-foreground">
     <!-- Router View -->
     <router-view
       :show-dashboard="showDashboard"
@@ -14,26 +14,11 @@ export default {
   name: 'App',
   data() {
     return {
-      darkMode: localStorage.getItem('darkMode') === 'true',
       showDashboard: false,
       createModalTrigger: 0,
     }
   },
-  mounted() {
-    if (this.darkMode) {
-      document.documentElement.classList.add('dark')
-    }
-  },
   methods: {
-    toggleDarkMode() {
-      this.darkMode = !this.darkMode
-      localStorage.setItem('darkMode', this.darkMode)
-      if (this.darkMode) {
-        document.documentElement.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-      }
-    },
     toggleDashboard() {
       this.showDashboard = !this.showDashboard
     },
