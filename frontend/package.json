@@ -15,22 +15,33 @@
     "format:check": "prettier --check \"src/**/*.{js,ts,json,css,scss,md,vue}\""
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^12.1.0",
+    "@vueuse/core": "^10.11.1",
     "axios": "^1.6.0",
-    "vue": "^3.3.4",
-    "vue-router": "^4.2.5",
-    "pinia": "^2.1.7"
+    "entities": "3.0.1",
+    "lucide-vue-next": "^0.563.0",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.13",
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.4.0",
-    "vite": "^5.0.0",
+    "@vitejs/plugin-vue": "^4.5.2",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "@vue/test-utils": "^2.4.0",
+    "autoprefixer": "^10.4.23",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.20.0",
-    "prettier": "^3.2.5",
-    "@vue/eslint-config-prettier": "^9.0.0",
-    "vitest": "^1.0.0",
-    "@vue/test-utils": "^2.4.0",
     "jsdom": "^23.0.0",
-    "@vitest/ui": "^1.0.0",
-    "@vitest/coverage-v8": "^1.0.0"
+    "postcss": "^8.5.6",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^3.4.15",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.57.0",
+    "@rollup/rollup-linux-x64-musl": "^4.57.0"
   }
 }

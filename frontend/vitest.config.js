@@ -27,4 +27,13 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
+  css: {
+    modules: {
+      classNameStrategy: 'non-scoped',
+    },
+  },
+  define: {
+    'process.env.NODE_ENV': '"test"',
+    'process.env.VITEST': 'true',
+  },
 })
