@@ -9,8 +9,12 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (using npm install to regenerate lock file if needed)
+# Clear npm cache to ensure fresh install and verify Tailwind version
+RUN npm cache clean --force && \
+    npm install && \
+    npm list tailwindcss && \
+    cat package.json | grep tailwindcss
 
 # Copy source code
 COPY . .

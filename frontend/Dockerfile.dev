@@ -11,8 +11,11 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy vite config (needed for initial setup)
+# Copy vite config and Tailwind/PostCSS configs (needed for initial setup)
 COPY vite.config.js ./
+COPY postcss.config.js ./
+COPY tailwind.config.js ./
+COPY src/style.css ./src/
 
 # Expose Vite dev server port
 EXPOSE 5173
