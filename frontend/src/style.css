@@ -73,4 +73,36 @@
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/30;
   }
+
+  /* Vue DatePicker dark mode styles */
+  .dark .dp__theme_dark {
+    --dp-background-color: rgb(31 41 55); /* gray-800 */
+    --dp-text-color: rgb(243 244 246); /* gray-100 */
+    --dp-hover-color: rgb(55 65 81); /* gray-700 */
+    --dp-hover-text-color: rgb(243 244 246); /* gray-100 */
+    --dp-primary-color: rgb(37 99 235); /* blue-600 */
+    --dp-primary-text-color: rgb(255 255 255);
+    --dp-secondary-color: rgb(55 65 81); /* gray-700 */
+    --dp-border-color: rgb(75 85 99); /* gray-600 */
+    --dp-menu-border-color: rgb(75 85 99); /* gray-600 */
+    --dp-border-color-hover: rgb(107 114 128); /* gray-500 */
+    --dp-disabled-color: rgb(55 65 81); /* gray-700 */
+    --dp-scroll-bar-background: rgb(31 41 55); /* gray-800 */
+    --dp-scroll-bar-color: rgb(107 114 128); /* gray-500 */
+    --dp-success-color: rgb(16 185 129); /* emerald-500 */
+    --dp-success-color-disabled: rgb(55 65 81); /* gray-700 */
+    --dp-icon-color: rgb(156 163 175); /* gray-400 */
+    --dp-danger-color: rgb(239 68 68); /* red-500 */
+  }
+
+  .dark .dp__input {
+    background-color: rgb(55 65 81) !important; /* gray-700 */
+    color: rgb(243 244 246) !important; /* gray-100 */
+    border-color: rgb(75 85 99) !important; /* gray-600 */
+  }
+
+  .dark .dp__input:focus {
+    border-color: rgb(96 165 250) !important; /* blue-400 */
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2) !important;
+  }
 }

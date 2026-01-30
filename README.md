@@ -76,26 +76,62 @@ A comprehensive CRUD application demonstrating modern development practices, pat
    ```
 
 4. **Access the application**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:8000
+   - Frontend: http://localhost:5173/app
+   - Backend API: http://localhost:8000/api/items/
    - API Documentation: http://localhost:8000/api/schema/swagger-ui/
    - Admin Panel: http://localhost:8000/admin
 
-### Docker Setup
+### Docker Setup (Recommended for Development)
+
+The project uses Docker Compose with separate development and production configurations.
+
+**For Development (with Hot Reload):**
 
 ```bash
-# Build and run all services
-docker-compose up --build
+# Build and run development services (backend + frontend-dev + redis)
+docker compose up -d backend frontend-dev redis
 
-# Run in background
-docker-compose up -d
+# Or build and run all at once
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
+
+# View logs for specific service
+docker compose logs -f frontend-dev
+docker compose logs -f backend
 
 # Stop services
-docker-compose down
+docker compose down
+
+# Restart a specific service
+docker compose restart backend
+docker compose restart frontend-dev
 ```
+
+**Access the application:**
+- **Frontend (Development)**: http://localhost:5173/app
+- **Backend API**: http://localhost:8000/api/items/
+- **API Documentation**: http://localhost:8000/api/schema/swagger-ui/
+- **Admin Panel**: http://localhost:8000/admin
+
+**Important Notes:**
+- The `frontend-dev` container uses Vite dev server with **hot-reload** enabled
+- Changes to frontend files (`frontend/src/`) are automatically detected and reloaded
+- Backend uses Django's `runserver` with **auto-reload** - Python file changes are detected automatically
+- No need to restart containers for code changes - only for dependency changes or Docker config changes
+- The production `frontend` container (port 80) is commented out by default - uncomment in `docker-compose.yml` if needed
+
+**For Production Build:**
+
+If you need to test the production build:
+
+1. Uncomment the `frontend` service in `docker-compose.yml`
+2. Build and run:
+   ```bash
+   docker compose up -d frontend
+   ```
+3. Access at: http://localhost/app
 
 ## 🧪 Testing
 
@@ -154,6 +190,56 @@ frontend/src/
 ├── pages/             # Route pages
 ├── router/            # Vue Router configuration
 └── api.js             # API service layer
+```
+
+## 🔥 Hot Reload & Development Workflow
+
+### How Hot Reload Works
+
+**Frontend (Vite Dev Server):**
+- Files in `frontend/src/` are watched automatically
+- Changes are detected via polling (configured for Docker)
+- Browser automatically refreshes when files change
+- No container restart needed for code changes
+
+**Backend (Django runserver):**
+- Python files are watched automatically
+- Django auto-reloads when `.py` files change
+- No container restart needed for code changes
+
+### When to Restart Containers
+
+You only need to restart containers for:
+- ✅ Installing new Python packages (`requirements.txt`)
+- ✅ Installing new npm packages (`package.json`)
+- ✅ Changes to Docker configuration (`Dockerfile`, `docker-compose.yml`)
+- ✅ Changes to environment variables in `docker-compose.yml`
+
+You **don't need** to restart for:
+- ❌ Changes to Vue components (`frontend/src/**/*.vue`)
+- ❌ Changes to Python code (`api/**/*.py`, `crudapp/**/*.py`)
+- ❌ Changes to CSS/JavaScript files
+- ❌ Changes to templates or static files
+
+### Quick Commands
+
+```bash
+# Start development environment
+docker compose up -d backend frontend-dev redis
+
+# Check status
+docker compose ps
+
+# View logs (follow mode)
+docker compose logs -f frontend-dev
+docker compose logs -f backend
+
+# Restart a service (if needed)
+docker compose restart backend
+docker compose restart frontend-dev
+
+# Stop everything
+docker compose down
 ```
 
 ## 🔧 Configuration

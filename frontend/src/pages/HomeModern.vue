@@ -789,6 +789,27 @@
             </div>
           </div>
 
+          <div>
+            <label class="text-sm font-medium mb-1.5 block text-gray-900 dark:text-gray-100"
+              >Due Date</label
+            >
+            <VueDatePicker
+              v-model="formData.due_date"
+              :dark="isDark"
+              :enable-time-picker="false"
+              placeholder="Select a date"
+              :class="[
+                'w-full',
+                'dp__input',
+                'bg-white dark:bg-gray-700',
+                'text-gray-900 dark:text-gray-100',
+                'border border-gray-200 dark:border-gray-600',
+                'rounded-lg',
+                'focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400',
+              ]"
+            />
+          </div>
+
           <div class="flex items-center gap-2">
             <input
               id="completed"
@@ -845,6 +866,8 @@ import {
   Sun,
   Moon,
 } from 'lucide-vue-next'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 import { itemService } from '../api'
 
 // Props
@@ -923,7 +946,7 @@ const formData = ref({
   completed: false,
   category: 'other',
   priority: 'medium',
-  due_date: '',
+  due_date: null, // DatePicker expects null, not empty string
   tags: '',
 })
 
@@ -1092,7 +1115,7 @@ const openCreateModal = () => {
     completed: false,
     category: 'other',
     priority: 'medium',
-    due_date: '',
+    due_date: null, // DatePicker expects null, not empty string
     tags: '',
   }
   showModal.value = true
@@ -1102,13 +1125,26 @@ const openCreateModal = () => {
 
 const openEditModal = item => {
   editingItem.value = item
+  // Convert due_date string to Date object for DatePicker
+  let dueDate = null
+  if (item.due_date) {
+    try {
+      dueDate = new Date(item.due_date)
+      // Check if date is valid
+      if (isNaN(dueDate.getTime())) {
+        dueDate = null
+      }
+    } catch (e) {
+      dueDate = null
+    }
+  }
   formData.value = {
     title: item.title,
     description: item.description || '',
     completed: item.completed,
     category: item.category || 'other',
     priority: item.priority || 'medium',
-    due_date: item.due_date || '',
+    due_date: dueDate,
     tags: item.tags || '',
   }
   showModal.value = true
@@ -1126,6 +1162,21 @@ const saveItem = async () => {
   success.value = null
   try {
     const data = { ...formData.value }
+    // Format due_date if it exists (DatePicker returns Date object, convert to YYYY-MM-DD)
+    if (data.due_date) {
+      if (data.due_date instanceof Date) {
+        // Convert Date object to YYYY-MM-DD format
+        const year = data.due_date.getFullYear()
+        const month = String(data.due_date.getMonth() + 1).padStart(2, '0')
+        const day = String(data.due_date.getDate()).padStart(2, '0')
+        data.due_date = `${year}-${month}-${day}`
+      } else if (typeof data.due_date === 'string' && data.due_date === '') {
+        // Remove empty string
+        delete data.due_date
+      }
+    } else {
+      delete data.due_date
+    }
 
     if (editingItem.value) {
       await itemService.update(editingItem.value.id, data)

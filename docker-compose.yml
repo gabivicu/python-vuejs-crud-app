@@ -62,19 +62,20 @@ services:
     # Use this for development - enables hot reload
 
   # Vue.js frontend - Production (Nginx Static Build)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: crudapp-frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    networks:
-      - crudapp-network
-    restart: unless-stopped
-    # Use this for production - static build
+  # Commented out for development - uncomment when you need production build
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: crudapp-frontend
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - crudapp-network
+  #   restart: unless-stopped
+  #   # Use this for production - static build
 
 volumes:
   redis-data:

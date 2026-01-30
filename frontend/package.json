@@ -15,6 +15,7 @@
     "format:check": "prettier --check \"src/**/*.{js,ts,json,css,scss,md,vue}\""
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^12.1.0",
     "@vueuse/core": "^10.11.1",
     "axios": "^1.6.0",
     "entities": "3.0.1",
@@ -38,5 +39,9 @@
     "tailwindcss": "^3.4.15",
     "vite": "^5.0.0",
     "vitest": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.57.0",
+    "@rollup/rollup-linux-x64-musl": "^4.57.0"
   }
 }

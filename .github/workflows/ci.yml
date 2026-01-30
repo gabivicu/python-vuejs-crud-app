@@ -41,7 +41,7 @@ jobs:
       - name: Run MyPy (type checking)
         run: |
           mypy api/ crudapp/ --ignore-missing-imports || true
-        continue-on-error: true  # MyPy poate avea erori, dar vrem să vedem warning-urile
+        continue-on-error: true
 
   backend-test:
     name: Backend Tests
@@ -99,10 +99,10 @@ jobs:
       - name: Install dependencies
         working-directory: ./frontend
         run: |
-          if [ -f "package-lock.json" ]; then
-            npm ci
-          else
-            npm install
+          npm install
+          if [ ! -d "node_modules/@rollup/rollup-linux-x64-gnu" ]; then
+            echo "Warning: Rollup native module not found, installing explicitly..."
+            npm install @rollup/rollup-linux-x64-gnu@^4.57.0 --save-optional || true
           fi
 
       - name: Check if ESLint is configured
